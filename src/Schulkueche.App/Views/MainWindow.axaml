@@ -85,17 +85,26 @@
                 </StackPanel>
 
                 <ScrollViewer Height="400">
-                    <ItemsControl ItemsSource="{Binding Zeilen}">
-                        <ItemsControl.ItemTemplate>
+                    <ListBox x:Name="ErfassungList" ItemsSource="{Binding Zeilen}" SelectionMode="Single">
+                        <ListBox.Styles>
+                            <!-- zebra stripes: very light overlay on odd rows -->
+                            <Style Selector="ListBox#ErfassungList > ListBoxItem:nth-child(odd)">
+                                <Setter Property="Background" Value="#10FFFFFF"/>
+                            </Style>
+                        </ListBox.Styles>
+
+                        <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="vm:ErfassungViewModel+Row">
-                                <Grid ColumnDefinitions="*,Auto,Auto" Margin="4">
-                                    <TextBlock Grid.Column="0" Text="{Binding DisplayName}"/>
-                                    <NumericUpDown Grid.Column="1" Width="100" Minimum="0" Maximum="50" Value="{Binding Quantity, Mode=TwoWay}"/>
-                                    <CheckBox Grid.Column="2" Content="Lieferung?" IsChecked="{Binding Delivery, Mode=TwoWay}"/>
-                                </Grid>
+                                <Border Padding="4" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource ThemeBorderLowBrush}">
+                                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" VerticalAlignment="Center">
+                                        <TextBlock Grid.Column="0" Text="{Binding DisplayName}"/>
+                                        <NumericUpDown Grid.Column="1" Width="100" Minimum="0" Maximum="50" Value="{Binding Quantity, Mode=TwoWay}"/>
+                                        <CheckBox Grid.Column="2" Content="Lieferung?" IsChecked="{Binding Delivery, Mode=TwoWay}"/>
+                                    </Grid>
+                                </Border>
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </ScrollViewer>
 
                 <TextBlock Text="{Binding Status}" Foreground="Gray"/>
