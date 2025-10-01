@@ -1,0 +1,53 @@
+# .NET / C#
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+.history/
+*.code-workspace
+
+# Build outputs
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Avalonia specific
+src/Schulkueche.App/wwwroot/
+
+# EF Core migrations snapshot cache (generated)
+_MigrationsHistory/
+
+# SQLite database (we will keep the file, but ignore backups)
+*.db-shm
+*.db-wal
+*.db-journal
+
+# Rider/JetBrains
+.idea/
+*.iml
+
+# Test results
+TestResult*/
+*.trx
+
