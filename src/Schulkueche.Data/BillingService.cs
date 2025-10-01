@@ -78,57 +78,104 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
         {
             container.Page(page =>
             {
-                page.Margin(20);
+                page.Margin(28);
                 page.Size(PageSizes.A4);
                 page.DefaultTextStyle(x => x.FontSize(10));
 
-                page.Header().Text($"Gemeinde-Küche – Sammelabrechnung {monthName}").SemiBold().FontSize(16);
-
-                page.Content().Table(table =>
+                page.Header().Column(header =>
                 {
-                    table.ColumnsDefinition(cols =>
-                    {
-                        cols.RelativeColumn(3); // Name
-                        cols.RelativeColumn(5); // Adresse
-                        cols.RelativeColumn(2); // Essenspreis/Menge
-                        cols.RelativeColumn(3); // Lieferung
-                        cols.RelativeColumn(2); // Summe
-                    });
-
-                    table.Header(h =>
-                    {
-                        h.Cell().Text("Name").SemiBold();
-                        h.Cell().Text("Anschrift").SemiBold();
-                        h.Cell().Text("Essenspreis / Menge").SemiBold();
-                        h.Cell().Text("Lieferung").SemiBold();
-                        h.Cell().Text("Summe").SemiBold();
-                    });
-
-                    foreach (var r in rows)
-                    {
-                        var cat = r.Category switch
-                        {
-                            PersonCategory.Pensioner => " (Pensionist)",
-                            PersonCategory.ChildGroup => " (Kinder)",
-                            PersonCategory.FreeMeal => " (Gratis)",
-                            _ => string.Empty
-                        };
-
-                        table.Cell().Text(r.Name + cat);
-                        table.Cell().Text(r.Address ?? string.Empty);
-                        table.Cell().Text($"{r.UnitPrice:C} x {r.Quantity}");
-                        table.Cell().Text(r.DeliveryCount > 0 ? $"{r.DeliveryCount} x {r.DeliverySurcharge:C}" : "");
-                        table.Cell().Text(r.Total.ToString("C"));
-                    }
+                    header.Item().Text($"Gemeinde-Küche").SemiBold().FontSize(14);
+                    header.Item().Text($"Sammelabrechnung {monthName}");
                 });
 
-                page.Footer().Column(col =>
+                page.Content().Column(col =>
                 {
-                    col.Spacing(5);
-                    col.Item().Text($"Gesamt Pensionisten: {totalPensioners:C}");
-                    col.Item().Text($"Gesamt Kinder: {totalChildren:C}");
-                    col.Item().Text($"Gesamt Gratis: {totalFree:C}");
-                    col.Item().Text($"Gesamtsumme: {total:C}").SemiBold();
+                    void Section(string title, IEnumerable<BillingRow> items)
+                    {
+                        var list = items.ToList();
+                        if (!list.Any()) return;
+
+                        col.Item().PaddingTop(8).Text(title).SemiBold();
+                        col.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(cols =>
+                            {
+                                cols.RelativeColumn(3); // Name
+                                cols.RelativeColumn(5); // Adresse
+                                cols.RelativeColumn(2); // Einheitspreis
+                                cols.RelativeColumn(2); // Menge
+                                cols.RelativeColumn(2); // Essen Summe
+                                cols.RelativeColumn(2); // Lieferungen
+                                cols.RelativeColumn(2); // Lieferung Summe
+                                cols.RelativeColumn(2); // Gesamt
+                            });
+
+                            // Header
+                            table.Header(h =>
+                            {
+                                h.Cell().Text("Name").SemiBold();
+                                h.Cell().Text("Anschrift").SemiBold();
+                                h.Cell().AlignRight().Text("Einzelpreis").SemiBold();
+                                h.Cell().AlignRight().Text("Menge").SemiBold();
+                                h.Cell().AlignRight().Text("Essen").SemiBold();
+                                h.Cell().AlignRight().Text("Liefer.").SemiBold();
+                                h.Cell().AlignRight().Text("Lieferung").SemiBold();
+                                h.Cell().AlignRight().Text("Summe").SemiBold();
+                            });
+
+                            var rowIndex = 0;
+                            foreach (var r in list)
+                            {
+                                var bg = (rowIndex++ % 2 == 0) ? Colors.Grey.Lighten4 : Colors.White;
+                                table.Cell().Background(bg).Text(r.Name);
+                                table.Cell().Background(bg).Text(r.Address ?? string.Empty);
+                                table.Cell().Background(bg).AlignRight().Text(r.UnitPrice.ToString("C"));
+                                table.Cell().Background(bg).AlignRight().Text(r.Quantity.ToString());
+                                var mealSum = r.UnitPrice * r.Quantity;
+                                var deliverySum = r.DeliveryCount * r.DeliverySurcharge;
+                                table.Cell().Background(bg).AlignRight().Text(mealSum.ToString("C"));
+                                table.Cell().Background(bg).AlignRight().Text(r.DeliveryCount > 0 ? r.DeliveryCount.ToString() : "");
+                                table.Cell().Background(bg).AlignRight().Text(deliverySum > 0 ? deliverySum.ToString("C") : "");
+                                table.Cell().Background(bg).AlignRight().Text(r.Total.ToString("C"));
+                            }
+
+                            // Section totals
+                            var sectionMeal = list.Sum(x => x.UnitPrice * x.Quantity);
+                            var sectionDeliv = list.Sum(x => x.DeliveryCount * x.DeliverySurcharge);
+                            var sectionTotal = list.Sum(x => x.Total);
+
+                            table.Cell().ColumnSpan(4).Text("");
+                            table.Cell().BorderTop(1).AlignRight().Text(sectionMeal.ToString("C")).SemiBold();
+                            table.Cell().BorderTop(1).AlignRight().Text("");
+                            table.Cell().BorderTop(1).AlignRight().Text(sectionDeliv > 0 ? sectionDeliv.ToString("C") : "");
+                            table.Cell().BorderTop(1).AlignRight().Text(sectionTotal.ToString("C")).SemiBold();
+                        });
+                    }
+
+                    Section("Pensionisten", rows.Where(r => r.Category == PersonCategory.Pensioner));
+                    Section("Kindergruppe", rows.Where(r => r.Category == PersonCategory.ChildGroup));
+                    Section("Gratis", rows.Where(r => r.Category == PersonCategory.FreeMeal));
+
+                    // Overall totals block
+                    col.Item().PaddingTop(12).BorderTop(1).PaddingTop(6).Row(r =>
+                    {
+                        r.RelativeItem().Text("");
+                        r.ConstantItem(240).Column(t =>
+                        {
+                            t.Item().Row(x => { x.RelativeItem().Text("Gesamt Pensionisten:"); x.ConstantItem(100).AlignRight().Text(totalPensioners.ToString("C")); });
+                            t.Item().Row(x => { x.RelativeItem().Text("Gesamt Kinder:"); x.ConstantItem(100).AlignRight().Text(totalChildren.ToString("C")); });
+                            t.Item().Row(x => { x.RelativeItem().Text("Gesamt Gratis:"); x.ConstantItem(100).AlignRight().Text(totalFree.ToString("C")); });
+                            t.Item().Row(x => { x.RelativeItem().Text("Gesamtsumme:").SemiBold(); x.ConstantItem(100).AlignRight().Text(total.ToString("C")).SemiBold(); });
+                        });
+                    });
+                });
+
+                page.Footer().AlignRight().Text(txt =>
+                {
+                    txt.Span("Seite ");
+                    txt.CurrentPageNumber();
+                    txt.Span(" / ");
+                    txt.TotalPages();
                 });
             });
         });
