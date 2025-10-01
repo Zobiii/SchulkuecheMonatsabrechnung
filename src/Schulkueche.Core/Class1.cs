@@ -1,6 +1,82 @@
-﻿namespace Schulkueche.Core;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class Class1
+namespace Schulkueche.Core;
+
+/// <summary>
+/// Types of people/groups supported by the system.
+/// </summary>
+public enum PersonCategory
 {
+    Pensioner = 0,
+    ChildGroup = 1,
+    FreeMeal = 2
+}
 
+/// <summary>
+/// Person or group receiving meals.
+/// </summary>
+public class Person
+{
+    public int Id { get; set; }
+
+    [MaxLength(200)]
+    public required string Name { get; set; }
+
+    [MaxLength(120)]
+    public string? Street { get; set; }
+
+    [MaxLength(20)]
+    public string? HouseNumber { get; set; }
+
+    [MaxLength(10)]
+    public string? Zip { get; set; }
+
+    [MaxLength(120)]
+    public string? City { get; set; }
+
+    /// <summary>
+    /// Default delivery preference shown in the daily capture.
+    /// </summary>
+    public bool DefaultDelivery { get; set; }
+
+    public PersonCategory Category { get; set; }
+}
+
+/// <summary>
+/// A meal order entry for a specific date.
+/// </summary>
+public class MealOrder
+{
+    public int Id { get; set; }
+    public DateOnly Date { get; set; }
+    public int PersonId { get; set; }
+    public Person? Person { get; set; }
+    public int Quantity { get; set; }
+    public bool Delivery { get; set; }
+}
+
+/// <summary>
+/// Additional charge item, e.g., floor carriers for a newly added pensioner in a month.
+/// </summary>
+public class AdditionalCharge
+{
+    public int Id { get; set; }
+    public int PersonId { get; set; }
+    public Person? Person { get; set; }
+    public DateOnly Month { get; set; } // Use first day of month as key
+    [MaxLength(200)]
+    public required string Description { get; set; }
+    public decimal UnitPrice { get; set; }
+    public int Quantity { get; set; }
+}
+
+/// <summary>
+/// Static constants for business defaults.
+/// Values can be overridden via configuration later.
+/// </summary>
+public static class PricingDefaults
+{
+    public const decimal PensionerMealPrice = 4.50m;
+    public const decimal DeliverySurcharge = 3.50m;
+    public const decimal ChildMealPrice = 2.90m;
 }
