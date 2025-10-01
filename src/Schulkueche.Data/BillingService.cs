@@ -69,10 +69,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
         var rows = await CalculateMonthlyAsync(year, month, ct);
         var monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
 
-        var total = rows.Sum(r => r.Total);
-        var totalPensioners = rows.Where(r => r.Category == PersonCategory.Pensioner).Sum(r => r.Total);
-        var totalChildren = rows.Where(r => r.Category == PersonCategory.ChildGroup).Sum(r => r.Total);
-        var totalFree = rows.Where(r => r.Category == PersonCategory.FreeMeal).Sum(r => r.Total);
+        // Totals removed per request
 
         var doc = Document.Create(container =>
         {
@@ -139,16 +136,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                                 table.Cell().Background(bg).AlignRight().Text(r.Total.ToString("C"));
                             }
 
-                            // Section totals
-                            var sectionMeal = list.Sum(x => x.UnitPrice * x.Quantity);
-                            var sectionDeliv = list.Sum(x => x.DeliveryCount * x.DeliverySurcharge);
-                            var sectionTotal = list.Sum(x => x.Total);
-
-                            table.Cell().ColumnSpan(4).Text("");
-                            table.Cell().BorderTop(1).AlignRight().Text(sectionMeal.ToString("C")).SemiBold();
-                            table.Cell().BorderTop(1).AlignRight().Text("");
-                            table.Cell().BorderTop(1).AlignRight().Text(sectionDeliv > 0 ? sectionDeliv.ToString("C") : "");
-                            table.Cell().BorderTop(1).AlignRight().Text(sectionTotal.ToString("C")).SemiBold();
+                            // No section totals per request
                         });
                     }
 
@@ -156,18 +144,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                     Section("Kindergruppe", rows.Where(r => r.Category == PersonCategory.ChildGroup));
                     Section("Gratis", rows.Where(r => r.Category == PersonCategory.FreeMeal));
 
-                    // Overall totals block
-                    col.Item().PaddingTop(12).BorderTop(1).PaddingTop(6).Row(r =>
-                    {
-                        r.RelativeItem().Text("");
-                        r.ConstantItem(240).Column(t =>
-                        {
-                            t.Item().Row(x => { x.RelativeItem().Text("Gesamt Pensionisten:"); x.ConstantItem(100).AlignRight().Text(totalPensioners.ToString("C")); });
-                            t.Item().Row(x => { x.RelativeItem().Text("Gesamt Kinder:"); x.ConstantItem(100).AlignRight().Text(totalChildren.ToString("C")); });
-                            t.Item().Row(x => { x.RelativeItem().Text("Gesamt Gratis:"); x.ConstantItem(100).AlignRight().Text(totalFree.ToString("C")); });
-                            t.Item().Row(x => { x.RelativeItem().Text("Gesamtsumme:").SemiBold(); x.ConstantItem(100).AlignRight().Text(total.ToString("C")).SemiBold(); });
-                        });
-                    });
+                    // No overall totals per request
                 });
 
                 page.Footer().AlignRight().Text(txt =>
