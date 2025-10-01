@@ -38,7 +38,19 @@ public partial class PersonenViewModel : ViewModelBase
     public PersonenViewModel(IPersonRepository repo)
     {
         _repo = repo;
-        _ = LadenAsync();
+        _ = InitializeAsync();
+    }
+    
+    private async Task InitializeAsync()
+    {
+        try
+        {
+            await LadenAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Status = $"Fehler beim Laden: {ex.Message}";
+        }
     }
 
     [RelayCommand]

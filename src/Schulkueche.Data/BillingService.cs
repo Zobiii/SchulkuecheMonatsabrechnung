@@ -37,7 +37,13 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
             .GroupBy(o => o.PersonId)
             .Select(g =>
             {
-                var p = g.First().Person!;
+                var firstOrder = g.First();
+                var p = firstOrder.Person;
+                if (p is null)
+                {
+                    throw new InvalidOperationException($"Person data missing for PersonId {firstOrder.PersonId}. This indicates a data integrity issue.");
+                }
+                
                 var unit = p.CustomMealPrice ?? p.Category switch
                 {
                     PersonCategory.Pensioner => PricingDefaults.PensionerMealPrice,

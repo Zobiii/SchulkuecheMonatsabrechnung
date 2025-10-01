@@ -28,8 +28,14 @@ public class KitchenDbContext : DbContext
     {
         modelBuilder.Entity<Person>(b =>
         {
-            b.Property(p => p.Name).IsRequired();
+            b.Property(p => p.Name).IsRequired().HasMaxLength(200);
+            b.Property(p => p.Street).HasMaxLength(120);
+            b.Property(p => p.HouseNumber).HasMaxLength(20);
+            b.Property(p => p.Zip).HasMaxLength(10);
+            b.Property(p => p.City).HasMaxLength(120);
+            b.Property(p => p.Contact).HasMaxLength(120);
             b.HasIndex(p => new { p.Name, p.Category }).IsUnique(false);
+            b.HasIndex(p => p.Name); // Performance index for search
         });
 
         modelBuilder.Entity<MealOrder>(b =>

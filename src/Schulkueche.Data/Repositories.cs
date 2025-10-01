@@ -64,18 +64,27 @@ internal sealed class OrderRepository(KitchenDbContext db) : IOrderRepository
 
     public async Task UpsertRangeAsync(IEnumerable<MealOrder> orders, CancellationToken ct = default)
     {
-        foreach (var order in orders)
+        var ordersList = orders.ToList();
+        if (!ordersList.Any()) return;
+        
+        // Get all existing orders for the date and person IDs in a single query
+        var date = ordersList.First().Date;
+        var personIds = ordersList.Select(o => o.PersonId).ToHashSet();
+        
+        var existingOrders = await db.MealOrders
+            .Where(o => o.Date == date && personIds.Contains(o.PersonId))
+            .ToDictionaryAsync(o => o.PersonId, ct);
+        
+        foreach (var order in ordersList)
         {
-            var existing = await db.MealOrders
-                .FirstOrDefaultAsync(o => o.Date == order.Date && o.PersonId == order.PersonId, ct);
-            if (existing is null)
-            {
-                db.MealOrders.Add(order);
-            }
-            else
+            if (existingOrders.TryGetValue(order.PersonId, out var existing))
             {
                 existing.Quantity = order.Quantity;
                 existing.Delivery = order.Delivery;
+            }
+            else
+            {
+                db.MealOrders.Add(order);
             }
         }
         await db.SaveChangesAsync(ct);
