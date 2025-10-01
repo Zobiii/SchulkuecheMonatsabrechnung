@@ -147,12 +147,20 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                     // No overall totals per request
                 });
 
-                page.Footer().AlignRight().Text(txt =>
+                page.Footer().Row(r =>
                 {
-                    txt.Span("Seite ");
-                    txt.CurrentPageNumber();
-                    txt.Span(" / ");
-                    txt.TotalPages();
+                    r.RelativeItem().AlignLeft().Text(t =>
+                    {
+                        t.Span("Auto-created by Schulkueche Monatsabrechnung").FontSize(9);
+                    });
+
+                    r.RelativeItem().AlignRight().Text(txt =>
+                    {
+                        txt.Span("Seite ").FontSize(9);
+                        txt.CurrentPageNumber();
+                        txt.Span(" / ").FontSize(9);
+                        txt.TotalPages();
+                    });
                 });
             });
         });
