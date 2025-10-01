@@ -24,10 +24,10 @@
                         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name, Mode=TwoWay}"/>
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="Kategorie:" Margin="0,4"/>
-                        <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding Category}" >
-                            <ComboBoxItem>Pensionist</ComboBoxItem>
-                            <ComboBoxItem>Kindergruppe</ComboBoxItem>
-                            <ComboBoxItem>Gratis</ComboBoxItem>
+                        <ComboBox Grid.Row="1" Grid.Column="1" SelectedItem="{Binding Category, Mode=TwoWay}">
+                            <vm:PersonCategory>Pensioner</vm:PersonCategory>
+                            <vm:PersonCategory>ChildGroup</vm:PersonCategory>
+                            <vm:PersonCategory>FreeMeal</vm:PersonCategory>
                         </ComboBox>
 
                         <CheckBox Grid.Row="1" Grid.Column="3" IsChecked="{Binding DefaultDelivery, Mode=TwoWay}" Content="Lieferung?"/>
@@ -44,12 +44,27 @@
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="Kontakt:" Margin="0,4"/>
                         <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Contact, Mode=TwoWay}"/>
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Individueller Essenspreis (€):" Margin="0,4"/>
+                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding CustomMealPrice, Mode=TwoWay}"/>
                     </Grid>
 
                     <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
                         <Button Content="Speichern" Command="{Binding SpeichernCommand}"/>
                         <Button Content="Neu" Command="{Binding NeuCommand}"/>
+                        <Button Content="Aktualisieren" Command="{Binding LadenCommand}"/>
+                        <Button Content="Löschen" Command="{Binding LoeschenCommand}"/>
                     </StackPanel>
+
+                    <Separator Margin="0,8"/>
+                    <TextBlock Text="Vorhandene Personen" FontWeight="Bold"/>
+                    <ListBox ItemsSource="{Binding PersonenListe}" SelectedItem="{Binding SelectedPerson, Mode=TwoWay}" Height="200">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </StackPanel>
             </ScrollViewer>
         </TabItem>

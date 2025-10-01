@@ -12,6 +12,7 @@ public interface IPersonRepository
     Task UpdateAsync(Person person, CancellationToken ct = default);
     Task<Person?> GetAsync(int id, CancellationToken ct = default);
     Task<List<Person>> GetAllAsync(CancellationToken ct = default);
+    Task DeleteAsync(int id, CancellationToken ct = default);
 }
 
 /// <summary>
@@ -43,6 +44,14 @@ internal sealed class PersonRepository(KitchenDbContext db) : IPersonRepository
 
     public Task<List<Person>> GetAllAsync(CancellationToken ct = default)
         => db.Persons.OrderBy(p => p.Name).ToListAsync(ct);
+
+    public async Task DeleteAsync(int id, CancellationToken ct = default)
+    {
+        var entity = await db.Persons.FirstOrDefaultAsync(p => p.Id == id, ct);
+        if (entity is null) return;
+        db.Persons.Remove(entity);
+        await db.SaveChangesAsync(ct);
+    }
 }
 
 internal sealed class OrderRepository(KitchenDbContext db) : IOrderRepository
