@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using QuestPDF.Infrastructure;
 
 namespace Schulkueche.Data;
 
@@ -25,6 +26,9 @@ public static class DataSetup
         services.AddScoped<IPersonRepository, PersonRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IBillingService, BillingService>();
+
+        // QuestPDF license (community)
+        QuestPDF.Settings.License = LicenseType.Community;
 
         return services;
     }

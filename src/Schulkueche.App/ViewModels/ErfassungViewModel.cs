@@ -15,6 +15,7 @@ public partial class ErfassungViewModel : ViewModelBase
     private readonly IOrderRepository _orderRepo;
 
     [ObservableProperty] private DateOnly _datum = DateOnly.FromDateTime(DateTime.Today);
+    [ObservableProperty] private DateTimeOffset? _selectedDate = DateTimeOffset.Now.Date;
 
     public record Row(int PersonId, string DisplayName, bool DefaultDelivery)
     {
@@ -36,6 +37,8 @@ public partial class ErfassungViewModel : ViewModelBase
     {
         Zeilen.Clear();
         var persons = await _personRepo.GetAllAsync();
+        var orders = await _orderRepo.GetForDateAsync(Datum);
+        var byPerson = orders.ToDictionary(o => o.PersonId);
         foreach (var p in persons)
         {
             var display = p.Category switch
@@ -45,7 +48,13 @@ public partial class ErfassungViewModel : ViewModelBase
                 PersonCategory.FreeMeal => $"{p.Name}  (Gratis)",
                 _ => p.Name
             };
-            Zeilen.Add(new Row(p.Id, display, p.DefaultDelivery));
+            var row = new Row(p.Id, display, p.DefaultDelivery);
+            if (byPerson.TryGetValue(p.Id, out var existing))
+            {
+                row.Quantity = existing.Quantity;
+                row.Delivery = existing.Delivery;
+            }
+            Zeilen.Add(row);
         }
     }
 
@@ -60,5 +69,21 @@ public partial class ErfassungViewModel : ViewModelBase
             Delivery = z.Delivery
         });
         await _orderRepo.UpsertRangeAsync(list);
+    }
+
+    [RelayCommand]
+    private void AlleMengenNull()
+    {
+        foreach (var z in Zeilen)
+            z.Quantity = 0;
+    }
+
+    partial void OnSelectedDateChanged(DateTimeOffset? value)
+    {
+        if (value.HasValue)
+        {
+            Datum = DateOnly.FromDateTime(value.Value.DateTime);
+            _ = LadenAsync();
+        }
     }
 }
