@@ -6,11 +6,20 @@ using System.Linq;
 using Avalonia.Markup.Xaml;
 using Schulkueche.App.ViewModels;
 using Schulkueche.App.Views;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Schulkueche.Data;
 
 namespace Schulkueche.App;
 
 public partial class App : Application
 {
+    private readonly IHost _host;
+
+    public App(IHost host)
+    {
+        _host = host;
+    }
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -23,10 +32,15 @@ public partial class App : Application
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow
+            // Ensure database is created/updated
+            using (var scope = _host.Services.CreateScope())
             {
-                DataContext = new MainWindowViewModel(),
-            };
+                var db = scope.ServiceProvider.GetRequiredService<KitchenDbContext>();
+                DbInitializer.EnsureDatabaseUpdatedAsync(db).GetAwaiter().GetResult();
+            }
+
+            var vm = ActivatorUtilities.CreateInstance<MainWindowViewModel>(_host.Services);
+            desktop.MainWindow = new MainWindow { DataContext = vm };
         }
 
         base.OnFrameworkInitializationCompleted();

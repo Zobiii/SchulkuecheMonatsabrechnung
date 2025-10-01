@@ -34,6 +34,9 @@ public class Person
     [MaxLength(120)]
     public string? City { get; set; }
 
+    [MaxLength(120)]
+    public string? Contact { get; set; }
+
     /// <summary>
     /// Default delivery preference shown in the daily capture.
     /// </summary>

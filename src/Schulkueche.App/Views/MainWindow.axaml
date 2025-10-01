@@ -7,7 +7,7 @@
         x:Class="Schulkueche.App.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Schulkueche.App">
+    Title="Gemeinde-Küche">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -15,6 +15,70 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <TabControl>
+        <TabItem Header="Personen">
+            <ScrollViewer>
+                <StackPanel Spacing="8" Margin="16" DataContext="{Binding Personen}">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" Margin="0,4"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name, Mode=TwoWay}"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Kategorie:" Margin="0,4"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" SelectedIndex="{Binding Category}" >
+                            <ComboBoxItem>Pensionist</ComboBoxItem>
+                            <ComboBoxItem>Kindergruppe</ComboBoxItem>
+                            <ComboBoxItem>Gratis</ComboBoxItem>
+                        </ComboBox>
+
+                        <CheckBox Grid.Row="1" Grid.Column="3" IsChecked="{Binding DefaultDelivery, Mode=TwoWay}" Content="Lieferung?"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Strasse:" Margin="0,4"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Street, Mode=TwoWay}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="Hsnr:" Margin="12,4,4,4"/>
+                        <TextBox Grid.Row="2" Grid.Column="3" Width="100" Text="{Binding HouseNumber, Mode=TwoWay}"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="PLZ:" Margin="0,4"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Width="120" Text="{Binding Zip, Mode=TwoWay}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="Ort:" Margin="12,4,4,4"/>
+                        <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding City, Mode=TwoWay}"/>
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Kontakt:" Margin="0,4"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Contact, Mode=TwoWay}"/>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                        <Button Content="Speichern" Command="{Binding SpeichernCommand}"/>
+                        <Button Content="Neu" Command="{Binding NeuCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+
+        <TabItem Header="Schnellerfassung">
+            <StackPanel Spacing="8" Margin="12" DataContext="{Binding Erfassung}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="Datum:" VerticalAlignment="Center"/>
+                    <DatePicker SelectedDate="{Binding Datum, Mode=TwoWay}"/>
+                    <Button Content="Speichern" Command="{Binding SpeichernCommand}"/>
+                </StackPanel>
+
+                <ScrollViewer Height="400">
+                    <ItemsControl ItemsSource="{Binding Zeilen}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ErfassungViewModel+Row">
+                                <Grid ColumnDefinitions="*,Auto,Auto" Margin="4">
+                                    <TextBlock Grid.Column="0" Text="{Binding DisplayName}"/>
+                                    <TextBox Grid.Column="1" Width="80" Text="{Binding Quantity, Mode=TwoWay}"/>
+                                    <CheckBox Grid.Column="2" Content="Lieferung?" IsChecked="{Binding Delivery, Mode=TwoWay}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+        </TabItem>
+
+        <TabItem Header="Abrechnung"/>
+    </TabControl>
 
 </Window>
