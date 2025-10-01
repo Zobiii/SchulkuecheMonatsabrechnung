@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Schulkueche.App.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/munderfing_logo-227x80.ico"
+        Icon="/Assets/avalonia-logo.ico"
     Title="Gemeinde-Küche">
 
     <Design.DataContext>
