@@ -100,11 +100,22 @@ public partial class PersonenViewModel : ViewModelBase
     [RelayCommand]
     private async Task LadenAsync()
     {
+        var selectedId = SelectedPerson?.Id;
         PersonenListe.Clear();
         var all = (await _repo.GetAllAsync()).OrderBy(p => p.Name, System.StringComparer.CurrentCultureIgnoreCase);
         foreach (var p in all)
             PersonenListe.Add(p);
+        if (selectedId.HasValue)
+            SelectedPerson = PersonenListe.FirstOrDefault(p => p.Id == selectedId.Value);
         OnPropertyChanged(nameof(GefiltertePersonen));
+    }
+
+    [RelayCommand]
+    private async Task AktualisierenAsync()
+    {
+        // Save current edits (if any) and refresh list
+        await SpeichernAsync();
+        await LadenAsync();
     }
 
     partial void OnSelectedPersonChanged(Person? value)
