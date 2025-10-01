@@ -19,6 +19,10 @@
         <TabItem Header="Personen">
             <ScrollViewer>
                 <StackPanel Spacing="8" Margin="16" DataContext="{Binding Personen}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBox Width="240" Watermark="Suche..." Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="{Binding Status}" Foreground="Gray" VerticalAlignment="Center"/>
+                    </StackPanel>
                     <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" Margin="0,4"/>
                         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name, Mode=TwoWay}"/>
@@ -58,7 +62,7 @@
 
                     <Separator Margin="0,8"/>
                     <TextBlock Text="Vorhandene Personen" FontWeight="Bold"/>
-                    <ListBox ItemsSource="{Binding PersonenListe}" SelectedItem="{Binding SelectedPerson, Mode=TwoWay}" Height="200">
+                    <ListBox ItemsSource="{Binding GefiltertePersonen}" SelectedItem="{Binding SelectedPerson, Mode=TwoWay}" Height="200">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}"/>
@@ -74,7 +78,9 @@
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBlock Text="Datum:" VerticalAlignment="Center"/>
                     <DatePicker SelectedDate="{Binding SelectedDate, Mode=TwoWay}"/>
+                    <Button Content="Heute" Command="{Binding HeuteCommand}"/>
                     <Button Content="Alle Mengen = 0" Command="{Binding AlleMengenNullCommand}"/>
+                    <Button Content="Lieferung zurücksetzen" Command="{Binding ResetLieferungCommand}"/>
                     <Button Content="Speichern" Command="{Binding SpeichernCommand}"/>
                 </StackPanel>
 
@@ -84,13 +90,15 @@
                             <DataTemplate x:DataType="vm:ErfassungViewModel+Row">
                                 <Grid ColumnDefinitions="*,Auto,Auto" Margin="4">
                                     <TextBlock Grid.Column="0" Text="{Binding DisplayName}"/>
-                                    <TextBox Grid.Column="1" Width="80" Text="{Binding Quantity, Mode=TwoWay}"/>
+                                    <NumericUpDown Grid.Column="1" Width="100" Minimum="0" Maximum="50" Value="{Binding Quantity, Mode=TwoWay}"/>
                                     <CheckBox Grid.Column="2" Content="Lieferung?" IsChecked="{Binding Delivery, Mode=TwoWay}"/>
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </ScrollViewer>
+
+                <TextBlock Text="{Binding Status}" Foreground="Gray"/>
             </StackPanel>
         </TabItem>
 
@@ -102,7 +110,7 @@
                     <TextBlock Text="Jahr:" VerticalAlignment="Center"/>
                     <NumericUpDown Minimum="2024" Maximum="2100" Value="{Binding Jahr, Mode=TwoWay}"/>
                     <Button Content="Berechnen" Command="{Binding BerechnenCommand}"/>
-                    <Button Content="PDF exportieren" Command="{Binding ExportPdfCommand}"/>
+                    <Button Content="PDF exportieren" Command="{Binding ExportPdfCommand}" IsEnabled="{Binding KannExportieren}"/>
                 </StackPanel>
                 <ListBox ItemsSource="{Binding Zeilen}" Height="400"/>
                 <StackPanel Orientation="Vertical" Spacing="4">
@@ -112,6 +120,7 @@
                     <TextBlock Text="{Binding SummeGratis, StringFormat='Gratis: {0:C}'}"/>
                     <TextBlock Text="{Binding SummeGesamt, StringFormat='Gesamt: {0:C}'}" FontWeight="Bold"/>
                 </StackPanel>
+                <TextBlock Text="{Binding Status}" Foreground="Gray"/>
             </StackPanel>
         </TabItem>
     </TabControl>

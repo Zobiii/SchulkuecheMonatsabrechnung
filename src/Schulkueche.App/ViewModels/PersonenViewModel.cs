@@ -19,6 +19,10 @@ public partial class PersonenViewModel : ViewModelBase
     [ObservableProperty]
     private Person? _selectedPerson;
 
+    // UI status feedback and quick filter (search)
+    [ObservableProperty] private string? _status;
+    [ObservableProperty] private string _filterText = string.Empty;
+
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string? _street;
     [ObservableProperty] private string? _houseNumber;
@@ -38,7 +42,11 @@ public partial class PersonenViewModel : ViewModelBase
     [RelayCommand]
     private async Task SpeichernAsync()
     {
-        if (string.IsNullOrWhiteSpace(Name)) return;
+        if (string.IsNullOrWhiteSpace(Name))
+        {
+            Status = "Bitte einen Namen eingeben.";
+            return;
+        }
 
         if (SelectedPerson is null)
         {
@@ -57,6 +65,7 @@ public partial class PersonenViewModel : ViewModelBase
             await _repo.AddAsync(p);
             PersonenListe.Add(p);
             SelectedPerson = p;
+            Status = "Person gespeichert.";
         }
         else
         {
@@ -70,7 +79,10 @@ public partial class PersonenViewModel : ViewModelBase
             SelectedPerson.Category = Category;
             SelectedPerson.CustomMealPrice = CustomMealPrice;
             await _repo.UpdateAsync(SelectedPerson);
+            Status = "Änderungen gespeichert.";
         }
+
+        OnPropertyChanged(nameof(GefiltertePersonen));
     }
 
     [RelayCommand]
@@ -82,15 +94,17 @@ public partial class PersonenViewModel : ViewModelBase
         Category = PersonCategory.Pensioner;
         SelectedPerson = null;
         CustomMealPrice = null;
+        Status = null;
     }
 
     [RelayCommand]
     private async Task LadenAsync()
     {
         PersonenListe.Clear();
-        var all = await _repo.GetAllAsync();
+        var all = (await _repo.GetAllAsync()).OrderBy(p => p.Name, System.StringComparer.CurrentCultureIgnoreCase);
         foreach (var p in all)
             PersonenListe.Add(p);
+        OnPropertyChanged(nameof(GefiltertePersonen));
     }
 
     partial void OnSelectedPersonChanged(Person? value)
@@ -109,6 +123,8 @@ public partial class PersonenViewModel : ViewModelBase
         Contact = value.Contact;
         DefaultDelivery = value.DefaultDelivery;
         Category = value.Category;
+        CustomMealPrice = value.CustomMealPrice;
+        Status = null;
     }
 
     [RelayCommand]
@@ -118,5 +134,16 @@ public partial class PersonenViewModel : ViewModelBase
         await _repo.DeleteAsync(SelectedPerson.Id);
         PersonenListe.Remove(SelectedPerson);
         Neu();
+        OnPropertyChanged(nameof(GefiltertePersonen));
+        Status = "Person gelöscht.";
     }
+
+    // Gefilterte Ansicht (Suche)
+    public System.Collections.Generic.IEnumerable<Person> GefiltertePersonen
+        => string.IsNullOrWhiteSpace(FilterText)
+            ? PersonenListe
+            : PersonenListe.Where(p => p.Name.Contains(FilterText, System.StringComparison.CurrentCultureIgnoreCase));
+
+    partial void OnFilterTextChanged(string value)
+        => OnPropertyChanged(nameof(GefiltertePersonen));
 }

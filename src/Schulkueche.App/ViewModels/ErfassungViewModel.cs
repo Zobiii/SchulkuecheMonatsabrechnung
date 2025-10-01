@@ -16,11 +16,35 @@ public partial class ErfassungViewModel : ViewModelBase
 
     [ObservableProperty] private DateOnly _datum = DateOnly.FromDateTime(DateTime.Today);
     [ObservableProperty] private DateTimeOffset? _selectedDate = DateTimeOffset.Now.Date;
+    [ObservableProperty] private string? _status;
 
-    public record Row(int PersonId, string DisplayName, bool DefaultDelivery)
+    public class Row : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
-        public int Quantity { get; set; }
-        public bool Delivery { get; set; } = DefaultDelivery;
+        public Row(int personId, string displayName, bool defaultDelivery)
+        {
+            PersonId = personId;
+            DisplayName = displayName;
+            DefaultDelivery = defaultDelivery;
+            _delivery = defaultDelivery;
+        }
+
+        public int PersonId { get; }
+        public string DisplayName { get; }
+        public bool DefaultDelivery { get; }
+
+        private int _quantity;
+        public int Quantity
+        {
+            get => _quantity;
+            set => SetProperty(ref _quantity, value);
+        }
+
+        private bool _delivery;
+        public bool Delivery
+        {
+            get => _delivery;
+            set => SetProperty(ref _delivery, value);
+        }
     }
 
     public ObservableCollection<Row> Zeilen { get; } = new();
@@ -36,6 +60,7 @@ public partial class ErfassungViewModel : ViewModelBase
     private async Task LadenAsync()
     {
         Zeilen.Clear();
+        Status = "Lade...";
         var persons = await _personRepo.GetAllAsync();
         var orders = await _orderRepo.GetForDateAsync(Datum);
         var byPerson = orders.ToDictionary(o => o.PersonId);
@@ -56,6 +81,7 @@ public partial class ErfassungViewModel : ViewModelBase
             }
             Zeilen.Add(row);
         }
+        Status = null;
     }
 
     [RelayCommand]
@@ -69,6 +95,7 @@ public partial class ErfassungViewModel : ViewModelBase
             Delivery = z.Delivery
         });
         await _orderRepo.UpsertRangeAsync(list);
+        Status = "Erfassung gespeichert.";
     }
 
     [RelayCommand]
@@ -85,5 +112,18 @@ public partial class ErfassungViewModel : ViewModelBase
             Datum = DateOnly.FromDateTime(value.Value.DateTime);
             _ = LadenAsync();
         }
+    }
+
+    [RelayCommand]
+    private void Heute()
+    {
+        SelectedDate = DateTimeOffset.Now.Date;
+    }
+
+    [RelayCommand]
+    private void ResetLieferung()
+    {
+        foreach (var z in Zeilen)
+            z.Delivery = z.DefaultDelivery;
     }
 }
