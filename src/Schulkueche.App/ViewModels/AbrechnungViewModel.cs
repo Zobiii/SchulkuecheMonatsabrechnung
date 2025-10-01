@@ -1,11 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Schulkueche.Data;
+using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Threading.Tasks;
-using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Schulkueche.App.ViewModels;
 
@@ -33,31 +33,46 @@ public partial class AbrechnungViewModel : ViewModelBase
     [RelayCommand]
     private async Task BerechnenAsync()
     {
-        Status = "Berechne...";
-        Zeilen.Clear();
-        var rows = await _billing.CalculateMonthlyAsync(Jahr, Monat);
-        foreach (var r in rows)
+        try
         {
-            Zeilen.Add($"{r.Name} | {r.UnitPrice:C} x {r.Quantity} + {r.DeliveryCount} x {r.DeliverySurcharge:C} = {r.Total:C}");
-        }
+            Status = "Berechne...";
+            Zeilen.Clear();
+            var rows = await _billing.CalculateMonthlyAsync(Jahr, Monat).ConfigureAwait(false);
+            foreach (var r in rows)
+            {
+                Zeilen.Add($"{r.Name} | {r.UnitPrice:C} x {r.Quantity} + {r.DeliveryCount} x {r.DeliverySurcharge:C} = {r.Total:C}");
+            }
 
-        SummeGesamt = rows.Sum(r => r.Total);
-        SummePensionisten = rows.Where(r => r.Category == Core.PersonCategory.Pensioner).Sum(r => r.Total);
-        SummeKinder = rows.Where(r => r.Category == Core.PersonCategory.ChildGroup).Sum(r => r.Total);
-        SummeGratis = rows.Where(r => r.Category == Core.PersonCategory.FreeMeal).Sum(r => r.Total);
-        _hatBerechnung = true;
-        OnPropertyChanged(nameof(KannExportieren));
-        Status = null;
+            SummeGesamt = rows.Sum(r => r.Total);
+            SummePensionisten = rows.Where(r => r.Category == Core.PersonCategory.Pensioner).Sum(r => r.Total);
+            SummeKinder = rows.Where(r => r.Category == Core.PersonCategory.ChildGroup).Sum(r => r.Total);
+            SummeGratis = rows.Where(r => r.Category == Core.PersonCategory.FreeMeal).Sum(r => r.Total);
+            _hatBerechnung = true;
+            OnPropertyChanged(nameof(KannExportieren));
+            Status = null;
+        }
+        catch (Exception ex)
+        {
+            Status = $"Fehler bei Berechnung: {ex.Message}";
+            _hatBerechnung = false;
+            OnPropertyChanged(nameof(KannExportieren));
+        }
     }
 
     [RelayCommand]
     private async Task ExportPdfAsync()
     {
         if (!KannExportieren) return;
-        var appData = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-        var file = System.IO.Path.Combine(appData, $"Sammelabrechnung_{Jahr}-{Monat:00}.pdf");
-        await _billing.ExportMonthlyPdfAsync(Jahr, Monat, file);
-        Status = $"PDF gespeichert: {file}";
-        // Optional: hier könnte eine UI-Benachrichtigung erfolgen
+        try
+        {
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            var file = System.IO.Path.Combine(appData, $"Sammelabrechnung_{Jahr}-{Monat:00}.pdf");
+            await _billing.ExportMonthlyPdfAsync(Jahr, Monat, file).ConfigureAwait(false);
+            Status = $"PDF gespeichert: {file}";
+        }
+        catch (Exception ex)
+        {
+            Status = $"Fehler beim PDF-Export: {ex.Message}";
+        }
     }
 }

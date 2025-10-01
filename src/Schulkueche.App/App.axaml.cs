@@ -24,6 +24,7 @@ public partial class App : Application
 
     // Parameterless constructor required by Avalonia XAML runtime loader (fixes AVLN3001 warning)
     // Not used in normal program flow where Program supplies the IHost.
+    // Note: This creates a temporary host that will be disposed when the app shuts down.
     public App() : this(Bootstrapper.BuildHost())
     {
     }

@@ -4,8 +4,8 @@ using Schulkueche.Core;
 using Schulkueche.Data;
 using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Schulkueche.App.ViewModels;
 
@@ -17,6 +17,7 @@ public partial class ErfassungViewModel : ViewModelBase
     [ObservableProperty] private DateOnly _datum = DateOnly.FromDateTime(DateTime.Today);
     [ObservableProperty] private DateTimeOffset? _selectedDate = DateTimeOffset.Now.Date;
     [ObservableProperty] private string? _status;
+    private bool _isLoading;
 
     public class Row : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
@@ -53,54 +54,88 @@ public partial class ErfassungViewModel : ViewModelBase
     {
         _personRepo = personRepo;
         _orderRepo = orderRepo;
-        _ = LadenAsync();
+        _ = InitializeAsync();
+    }
+
+    private async Task InitializeAsync()
+    {
+        try
+        {
+            await LadenAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Status = $"Fehler beim Laden: {ex.Message}";
+        }
     }
 
     [RelayCommand]
     private async Task LadenAsync()
     {
-        Zeilen.Clear();
-        Status = "Lade...";
-        var persons = await _personRepo.GetAllAsync();
-        var orders = await _orderRepo.GetForDateAsync(Datum);
-        var byPerson = orders.ToDictionary(o => o.PersonId);
-        foreach (var p in persons)
+        if (_isLoading) return;
+        _isLoading = true;
+        
+        try
         {
-            var display = p.Category switch
+            Zeilen.Clear();
+            Status = "Lade...";
+            var persons = await _personRepo.GetAllAsync().ConfigureAwait(false);
+            var orders = await _orderRepo.GetForDateAsync(Datum).ConfigureAwait(false);
+            var byPerson = orders.ToDictionary(o => o.PersonId);
+            
+            foreach (var p in persons)
             {
-                PersonCategory.Pensioner => $"{p.Name}  (Pensionist)",
-                PersonCategory.ChildGroup => $"{p.Name}  (Kinder)",
-                PersonCategory.FreeMeal => $"{p.Name}  (Gratis)",
-                _ => p.Name
-            };
-            var row = new Row(p.Id, display, p.DefaultDelivery);
-            if (byPerson.TryGetValue(p.Id, out var existing))
-            {
-                row.Quantity = existing.Quantity;
-                row.Delivery = existing.Delivery;
+                var display = p.Category switch
+                {
+                    PersonCategory.Pensioner => $"{p.Name}  (Pensionist)",
+                    PersonCategory.ChildGroup => $"{p.Name}  (Kinder)",
+                    PersonCategory.FreeMeal => $"{p.Name}  (Gratis)",
+                    _ => p.Name
+                };
+                var row = new Row(p.Id, display, p.DefaultDelivery);
+                if (byPerson.TryGetValue(p.Id, out var existing))
+                {
+                    row.Quantity = existing.Quantity;
+                    row.Delivery = existing.Delivery;
+                }
+                else if (p.Category == PersonCategory.Pensioner)
+                {
+                    // Default quantity to 1 for pensioners when no prior order exists for the selected date
+                    row.Quantity = 1;
+                }
+                Zeilen.Add(row);
             }
-            else if (p.Category == PersonCategory.Pensioner)
-            {
-                // Default quantity to 1 for pensioners when no prior order exists for the selected date
-                row.Quantity = 1;
-            }
-            Zeilen.Add(row);
+            Status = null;
         }
-        Status = null;
+        catch (Exception ex)
+        {
+            Status = $"Fehler beim Laden: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
     }
 
     [RelayCommand]
     private async Task SpeichernAsync()
     {
-        var list = Zeilen.Select(z => new MealOrder
+        try
         {
-            Date = Datum,
-            PersonId = z.PersonId,
-            Quantity = z.Quantity,
-            Delivery = z.Delivery
-        });
-        await _orderRepo.UpsertRangeAsync(list);
-        Status = "Erfassung gespeichert.";
+            var list = Zeilen.Select(z => new MealOrder
+            {
+                Date = Datum,
+                PersonId = z.PersonId,
+                Quantity = z.Quantity,
+                Delivery = z.Delivery
+            });
+            await _orderRepo.UpsertRangeAsync(list).ConfigureAwait(false);
+            Status = "Erfassung gespeichert.";
+        }
+        catch (Exception ex)
+        {
+            Status = $"Fehler beim Speichern: {ex.Message}";
+        }
     }
 
     [RelayCommand]
@@ -115,7 +150,17 @@ public partial class ErfassungViewModel : ViewModelBase
         if (value.HasValue)
         {
             Datum = DateOnly.FromDateTime(value.Value.DateTime);
-            _ = LadenAsync();
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await LadenAsync().ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Status = $"Fehler beim Laden: {ex.Message}";
+                }
+            });
         }
     }
 
