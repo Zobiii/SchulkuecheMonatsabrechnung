@@ -79,6 +79,11 @@ public partial class ErfassungViewModel : ViewModelBase
                 row.Quantity = existing.Quantity;
                 row.Delivery = existing.Delivery;
             }
+            else if (p.Category == PersonCategory.Pensioner)
+            {
+                // Default quantity to 1 for pensioners when no prior order exists for the selected date
+                row.Quantity = 1;
+            }
             Zeilen.Add(row);
         }
         Status = null;
@@ -124,6 +129,11 @@ public partial class ErfassungViewModel : ViewModelBase
     private void ResetLieferung()
     {
         foreach (var z in Zeilen)
+        {
             z.Delivery = z.DefaultDelivery;
+            // Wenn Pensionist: Menge = 1 setzen
+            if (z.DisplayName.Contains("Pensionist", StringComparison.CurrentCultureIgnoreCase))
+                z.Quantity = Math.Max(1, z.Quantity);
+        }
     }
 }

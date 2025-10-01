@@ -15,7 +15,7 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TabControl>
+    <TabControl SelectionChanged="OnTabSelectionChanged">
         <TabItem Header="Personen">
             <ScrollViewer>
                 <StackPanel Spacing="8" Margin="16" DataContext="{Binding Personen}">
@@ -73,7 +73,7 @@
             </ScrollViewer>
         </TabItem>
 
-        <TabItem Header="Schnellerfassung">
+    <TabItem x:Name="ErfassungTab" Header="Schnellerfassung">
             <StackPanel Spacing="8" Margin="12" DataContext="{Binding Erfassung}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBlock Text="Datum:" VerticalAlignment="Center"/>
