@@ -9,6 +9,7 @@ using Schulkueche.App.Views;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Schulkueche.Data;
+using Schulkueche.App.Infrastructure;
 
 namespace Schulkueche.App;
 
@@ -19,6 +20,12 @@ public partial class App : Application
     public App(IHost host)
     {
         _host = host;
+    }
+
+    // Parameterless constructor required by Avalonia XAML runtime loader (fixes AVLN3001 warning)
+    // Not used in normal program flow where Program supplies the IHost.
+    public App() : this(Bootstrapper.BuildHost())
+    {
     }
     public override void Initialize()
     {
