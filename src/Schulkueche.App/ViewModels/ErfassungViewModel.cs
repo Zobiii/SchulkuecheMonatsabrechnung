@@ -37,7 +37,7 @@ public partial class ErfassungViewModel : ViewModelBase
         public int Quantity
         {
             get => _quantity;
-            set => SetProperty(ref _quantity, value);
+            set => SetProperty(ref _quantity, Math.Max(0, Math.Min(50, value)));
         }
 
         private bool _delivery;
@@ -150,17 +150,7 @@ public partial class ErfassungViewModel : ViewModelBase
         if (value.HasValue)
         {
             Datum = DateOnly.FromDateTime(value.Value.DateTime);
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    await LadenAsync().ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    Status = $"Fehler beim Laden: {ex.Message}";
-                }
-            });
+            _ = LadenAsync();
         }
     }
 

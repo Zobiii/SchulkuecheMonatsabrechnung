@@ -33,6 +33,18 @@ public partial class AbrechnungViewModel : ViewModelBase
     [RelayCommand]
     private async Task BerechnenAsync()
     {
+        // Validate Jahr/Monat
+        if (Jahr < 2020 || Jahr > 2100)
+        {
+            Status = "Jahr muss zwischen 2020 und 2100 liegen.";
+            return;
+        }
+        if (Monat < 1 || Monat > 12)
+        {
+            Status = "Monat muss zwischen 1 und 12 liegen.";
+            return;
+        }
+        
         try
         {
             Status = "Berechne...";
@@ -65,10 +77,27 @@ public partial class AbrechnungViewModel : ViewModelBase
         if (!KannExportieren) return;
         try
         {
-            var appData = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            var file = System.IO.Path.Combine(appData, $"Sammelabrechnung_{Jahr}-{Monat:00}.pdf");
+            // Use Documents folder instead of Desktop for better reliability
+            var documentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var targetDir = System.IO.Path.Combine(documentsFolder, "Schulkueche");
+            
+            // Ensure directory exists
+            if (!System.IO.Directory.Exists(targetDir))
+            {
+                System.IO.Directory.CreateDirectory(targetDir);
+            }
+            
+            var file = System.IO.Path.Combine(targetDir, $"Sammelabrechnung_{Jahr}-{Monat:00}.pdf");
             await _billing.ExportMonthlyPdfAsync(Jahr, Monat, file).ConfigureAwait(false);
             Status = $"PDF gespeichert: {file}";
+        }
+        catch (System.UnauthorizedAccessException)
+        {
+            Status = "Fehler: Keine Berechtigung zum Speichern der PDF-Datei.";
+        }
+        catch (System.IO.DirectoryNotFoundException)
+        {
+            Status = "Fehler: Zielordner konnte nicht erstellt werden.";
         }
         catch (Exception ex)
         {

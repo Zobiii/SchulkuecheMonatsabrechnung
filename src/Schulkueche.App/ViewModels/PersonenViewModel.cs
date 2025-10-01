@@ -33,6 +33,7 @@ public partial class PersonenViewModel : ViewModelBase
     [ObservableProperty] private bool _defaultDelivery;
     [ObservableProperty] private PersonCategory _category = PersonCategory.Pensioner;
     [ObservableProperty] private decimal? _customMealPrice;
+    [ObservableProperty] private string _customMealPriceText = string.Empty;
 
     public PersonenViewModel(IPersonRepository repo)
     {
@@ -48,6 +49,15 @@ public partial class PersonenViewModel : ViewModelBase
             Status = "Bitte einen Namen eingeben.";
             return;
         }
+
+        // Validate CustomMealPrice input
+        if (!string.IsNullOrWhiteSpace(CustomMealPriceText) && !decimal.TryParse(CustomMealPriceText.Replace(',', '.'), System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture, out var parsedPrice))
+        {
+            Status = "Individueller Essenspreis ist ungültig. Bitte eine Zahl eingeben (z.B. 4,50).";
+            return;
+        }
+        
+        CustomMealPrice = string.IsNullOrWhiteSpace(CustomMealPriceText) ? null : decimal.Parse(CustomMealPriceText.Replace(',', '.'), System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture);
 
         try
         {
@@ -102,6 +112,7 @@ public partial class PersonenViewModel : ViewModelBase
         Category = PersonCategory.Pensioner;
         SelectedPerson = null;
         CustomMealPrice = null;
+        CustomMealPriceText = string.Empty;
         Status = null;
     }
 
@@ -150,6 +161,7 @@ public partial class PersonenViewModel : ViewModelBase
         DefaultDelivery = value.DefaultDelivery;
         Category = value.Category;
         CustomMealPrice = value.CustomMealPrice;
+        CustomMealPriceText = value.CustomMealPrice?.ToString("F2") ?? string.Empty;
         Status = null;
     }
 
