@@ -24,6 +24,7 @@ public static class DataSetup
 
         services.AddScoped<IPersonRepository, PersonRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IBillingService, BillingService>();
 
         return services;
     }

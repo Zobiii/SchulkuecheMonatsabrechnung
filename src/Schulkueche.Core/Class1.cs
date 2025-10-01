@@ -43,6 +43,11 @@ public class Person
     public bool DefaultDelivery { get; set; }
 
     public PersonCategory Category { get; set; }
+
+    /// <summary>
+    /// Optional per-person custom unit price. If set, overrides the category default.
+    /// </summary>
+    public decimal? CustomMealPrice { get; set; }
 }
 
 /// <summary>

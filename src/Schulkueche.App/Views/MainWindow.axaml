@@ -78,7 +78,18 @@
             </StackPanel>
         </TabItem>
 
-        <TabItem Header="Abrechnung"/>
+        <TabItem Header="Abrechnung">
+            <StackPanel Spacing="8" Margin="12" DataContext="{Binding Abrechnung}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="Monat:" VerticalAlignment="Center"/>
+                    <NumericUpDown Minimum="1" Maximum="12" Value="{Binding Monat, Mode=TwoWay}"/>
+                    <TextBlock Text="Jahr:" VerticalAlignment="Center"/>
+                    <NumericUpDown Minimum="2024" Maximum="2100" Value="{Binding Jahr, Mode=TwoWay}"/>
+                    <Button Content="Berechnen" Command="{Binding BerechnenCommand}"/>
+                </StackPanel>
+                <ListBox ItemsSource="{Binding Zeilen}" Height="400"/>
+            </StackPanel>
+        </TabItem>
     </TabControl>
 
 </Window>
