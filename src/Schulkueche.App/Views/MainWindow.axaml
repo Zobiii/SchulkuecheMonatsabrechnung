@@ -61,13 +61,15 @@
                                 <Border IsVisible="{Binding HatEtagentraeger}" BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1" CornerRadius="4" Padding="8" Margin="0,8,0,0" Background="{DynamicResource ThemeControlAltHighBrush}">
                                     <StackPanel Spacing="8">
                                         <TextBlock Text="Etagenträger Details" FontWeight="SemiBold" FontSize="11"/>
-                                        <Grid ColumnDefinitions="100,80,100,80,100,*" ColumnSpacing="8" RowDefinitions="Auto" RowSpacing="6">
+                                        <Grid ColumnDefinitions="70,60,70,60,70,60,70,*" ColumnSpacing="8" RowDefinitions="Auto" RowSpacing="6">
                                             <TextBlock Grid.Column="0" Text="Monat:" VerticalAlignment="Center"/>
                                             <NumericUpDown Grid.Column="1" Minimum="1" Maximum="12" Value="{Binding EtagentraegerMonat, Mode=TwoWay}"/>
                                             <TextBlock Grid.Column="2" Text="Jahr:" VerticalAlignment="Center"/>
                                             <NumericUpDown Grid.Column="3" Minimum="2024" Maximum="2030" Value="{Binding EtagentraegerJahr, Mode=TwoWay}"/>
-                                            <TextBlock Grid.Column="4" Text="Preis (€):" VerticalAlignment="Center"/>
-                                            <NumericUpDown Grid.Column="5" Minimum="0" Maximum="100" FormatString="F2" Value="{Binding EtagentraegerPreis, Mode=TwoWay}"/>
+                                            <TextBlock Grid.Column="4" Text="Menge:" VerticalAlignment="Center"/>
+                                            <NumericUpDown Grid.Column="5" Minimum="1" Maximum="10" Value="{Binding EtagentraegerMenge, Mode=TwoWay}"/>
+                                            <TextBlock Grid.Column="6" Text="Preis (€):" VerticalAlignment="Center"/>
+                                            <NumericUpDown Grid.Column="7" Minimum="0" Maximum="100" FormatString="F2" Value="{Binding EtagentraegerPreis, Mode=TwoWay}"/>
                                         </Grid>
                                     </StackPanel>
                                 </Border>
@@ -102,7 +104,7 @@
                     </StackPanel>
                 </ScrollViewer>
                 <TextBlock Grid.Row="1" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                           Text="Developed by Lechner Tobias v1.1.0.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                           Text="Developed by Lechner Tobias v1.1.1.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
@@ -144,7 +146,7 @@
                 <TextBlock Text="{Binding Status}" Foreground="Gray"/>
             </StackPanel>
             <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                       Text="Developed by Lechner Tobias v1.1.0.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                       Text="Developed by Lechner Tobias v1.1.1.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
@@ -170,7 +172,7 @@
                 <TextBlock Text="{Binding Status}" Foreground="Gray"/>
             </StackPanel>
             <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                       Text="Developed by Lechner Tobias v1.1.0.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                       Text="Developed by Lechner Tobias v1.1.1.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
     </TabControl>
