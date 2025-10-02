@@ -24,6 +24,19 @@ public interface IOrderRepository
     Task UpsertRangeAsync(IEnumerable<MealOrder> orders, CancellationToken ct = default);
 }
 
+/// <summary>
+/// Abstraction to manage additional charges (e.g., floor carriers for new pensioners).
+/// </summary>
+public interface IAdditionalChargeRepository
+{
+    Task<AdditionalCharge> AddAsync(AdditionalCharge charge, CancellationToken ct = default);
+    Task UpdateAsync(AdditionalCharge charge, CancellationToken ct = default);
+    Task DeleteAsync(int id, CancellationToken ct = default);
+    Task<List<AdditionalCharge>> GetForPersonAsync(int personId, CancellationToken ct = default);
+    Task<List<AdditionalCharge>> GetForMonthAsync(int year, int month, CancellationToken ct = default);
+    Task<AdditionalCharge?> GetAsync(int id, CancellationToken ct = default);
+}
+
 internal sealed class PersonRepository(KitchenDbContext db) : IPersonRepository
 {
     public async Task<Person> AddAsync(Person person, CancellationToken ct = default)
@@ -52,6 +65,49 @@ internal sealed class PersonRepository(KitchenDbContext db) : IPersonRepository
         db.Persons.Remove(entity);
         await db.SaveChangesAsync(ct);
     }
+}
+
+internal sealed class AdditionalChargeRepository(KitchenDbContext db) : IAdditionalChargeRepository
+{
+    public async Task<AdditionalCharge> AddAsync(AdditionalCharge charge, CancellationToken ct = default)
+    {
+        db.AdditionalCharges.Add(charge);
+        await db.SaveChangesAsync(ct);
+        return charge;
+    }
+
+    public async Task UpdateAsync(AdditionalCharge charge, CancellationToken ct = default)
+    {
+        db.AdditionalCharges.Update(charge);
+        await db.SaveChangesAsync(ct);
+    }
+
+    public async Task DeleteAsync(int id, CancellationToken ct = default)
+    {
+        var entity = await db.AdditionalCharges.FirstOrDefaultAsync(c => c.Id == id, ct);
+        if (entity is null) return;
+        db.AdditionalCharges.Remove(entity);
+        await db.SaveChangesAsync(ct);
+    }
+
+    public Task<List<AdditionalCharge>> GetForPersonAsync(int personId, CancellationToken ct = default)
+        => db.AdditionalCharges.Include(c => c.Person)
+            .Where(c => c.PersonId == personId)
+            .OrderByDescending(c => c.Month)
+            .ToListAsync(ct);
+
+    public Task<List<AdditionalCharge>> GetForMonthAsync(int year, int month, CancellationToken ct = default)
+    {
+        var targetMonth = new DateOnly(year, month, 1);
+        return db.AdditionalCharges.Include(c => c.Person)
+            .Where(c => c.Month == targetMonth)
+            .OrderBy(c => c.Person!.Name)
+            .ToListAsync(ct);
+    }
+
+    public Task<AdditionalCharge?> GetAsync(int id, CancellationToken ct = default)
+        => db.AdditionalCharges.Include(c => c.Person)
+            .FirstOrDefaultAsync(c => c.Id == id, ct);
 }
 
 internal sealed class OrderRepository(KitchenDbContext db) : IOrderRepository

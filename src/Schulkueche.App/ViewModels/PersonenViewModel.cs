@@ -15,6 +15,7 @@ namespace Schulkueche.App.ViewModels;
 public partial class PersonenViewModel : ViewModelBase
 {
     private readonly IPersonRepository _repo;
+    private readonly IAdditionalChargeRepository _chargeRepo;
     public ObservableCollection<Person> PersonenListe { get; } = new();
 
     [ObservableProperty]
@@ -34,10 +35,18 @@ public partial class PersonenViewModel : ViewModelBase
     [ObservableProperty] private PersonCategory _category = PersonCategory.Pensioner;
     [ObservableProperty] private decimal? _customMealPrice;
     [ObservableProperty] private string _customMealPriceText = string.Empty;
+    
+    // Etagenträger (Additional Charges) Properties
+    [ObservableProperty] private bool _hatEtagentraeger;
+    [ObservableProperty] private int _etagentraegerJahr = DateTime.Today.Year;
+    [ObservableProperty] private int _etagentraegerMonat = DateTime.Today.Month;
+    [ObservableProperty] private decimal _etagentraegerPreis = 15.00m; // Default Etagenträger price
+    [ObservableProperty] private int _etagentraegerMenge = 1;
 
-    public PersonenViewModel(IPersonRepository repo)
+    public PersonenViewModel(IPersonRepository repo, IAdditionalChargeRepository chargeRepo)
     {
         _repo = repo;
+        _chargeRepo = chargeRepo;
         _ = InitializeAsync();
     }
     
@@ -90,7 +99,18 @@ public partial class PersonenViewModel : ViewModelBase
                 await _repo.AddAsync(p).ConfigureAwait(false);
                 PersonenListe.Add(p);
                 SelectedPerson = p;
+                
+                // Add Etagenträger if specified
+                if (HatEtagentraeger)
+                {
+                    await AddEtagentraegerAsync(p.Id).ConfigureAwait(false);
+                }
+                
                 Status = "Person gespeichert.";
+                if (HatEtagentraeger)
+                {
+                    Status += $" Etagenträger für {EtagentraegerMonat:00}/{EtagentraegerJahr} hinzugefügt.";
+                }
             }
             else
             {
@@ -114,6 +134,26 @@ public partial class PersonenViewModel : ViewModelBase
             Status = $"Fehler beim Speichern: {ex.Message}";
         }
     }
+    
+    private async Task AddEtagentraegerAsync(int personId)
+    {
+        try
+        {
+            var charge = new AdditionalCharge
+            {
+                PersonId = personId,
+                Month = new DateOnly(EtagentraegerJahr, EtagentraegerMonat, 1),
+                Description = $"Etagenträger {EtagentraegerMonat:00}/{EtagentraegerJahr}",
+                UnitPrice = EtagentraegerPreis,
+                Quantity = EtagentraegerMenge
+            };
+            await _chargeRepo.AddAsync(charge).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Status = $"Fehler beim Hinzufügen des Etagenträgers: {ex.Message}";
+        }
+    }
 
     [RelayCommand]
     private void Neu()
@@ -125,6 +165,14 @@ public partial class PersonenViewModel : ViewModelBase
         SelectedPerson = null;
         CustomMealPrice = null;
         CustomMealPriceText = string.Empty;
+        
+        // Reset Etagenträger fields
+        HatEtagentraeger = false;
+        EtagentraegerJahr = DateTime.Today.Year;
+        EtagentraegerMonat = DateTime.Today.Month;
+        EtagentraegerPreis = 15.00m;
+        EtagentraegerMenge = 1;
+        
         Status = null;
     }
 
