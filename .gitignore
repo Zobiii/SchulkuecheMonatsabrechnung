@@ -51,3 +51,6 @@ _MigrationsHistory/
 TestResult*/
 *.trx
 
+# Warp terminal specific files
+WARP.md
+
