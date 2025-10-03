@@ -114,7 +114,6 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                             {
                                 cols.RelativeColumn(3); // Name
                                 cols.RelativeColumn(4); // Adresse
-                                cols.RelativeColumn(2); // Einheitspreis
                                 cols.RelativeColumn(1); // Menge
                                 cols.RelativeColumn(2); // Essen Summe
                                 cols.RelativeColumn(1); // Lieferungen
@@ -128,7 +127,6 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                             {
                                 h.Cell().Text("Name").SemiBold();
                                 h.Cell().Text("Anschrift").SemiBold();
-                                h.Cell().AlignRight().Text("Einzelpreis").SemiBold();
                                 h.Cell().AlignRight().Text("Menge").SemiBold();
                                 h.Cell().AlignRight().Text("Essen").SemiBold();
                                 h.Cell().AlignRight().Text("Liefer.").SemiBold();
@@ -143,7 +141,6 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                                 var bg = (rowIndex++ % 2 == 0) ? Colors.Grey.Lighten4 : Colors.White;
                                 table.Cell().Background(bg).Text(r.Name);
                                 table.Cell().Background(bg).Text(r.Address ?? string.Empty);
-                                table.Cell().Background(bg).AlignRight().Text(r.UnitPrice.ToString("C"));
                                 table.Cell().Background(bg).AlignRight().Text(r.Quantity.ToString());
                                 var mealSum = r.UnitPrice * r.Quantity;
                                 var deliverySum = r.DeliveryCount * r.DeliverySurcharge;
