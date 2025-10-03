@@ -14,7 +14,7 @@ public record BillingRow(
     int Quantity,
     int DeliveryCount,
     decimal DeliverySurcharge,
-    decimal AdditionalCharges,
+    int EtagentraegerMenge,
     decimal Total);
 
 public interface IBillingService
@@ -39,7 +39,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
             .Where(c => c.Month == first)
             .ToListAsync(ct);
         var chargesByPerson = additionalCharges.GroupBy(c => c.PersonId)
-            .ToDictionary(g => g.Key, g => g.Sum(c => c.UnitPrice * c.Quantity));
+            .ToDictionary(g => g.Key, g => g.Sum(c => c.Quantity)); // Nur Menge, kein Preis
 
         var rows = orders
             .GroupBy(o => o.PersonId)
@@ -62,8 +62,8 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                 var qty = g.Sum(x => x.Quantity);
                 var deliveries = g.Count(x => x.Delivery);
                 var deliverySum = deliveries * PricingDefaults.DeliverySurcharge;
-                var additionalChargesSum = chargesByPerson.GetValueOrDefault(p.Id, 0m);
-                var total = unit * qty + deliverySum + additionalChargesSum;
+                var etagentraegerMenge = chargesByPerson.GetValueOrDefault(p.Id, 0);
+                var total = unit * qty + deliverySum; // Etagenträger werden NICHT verrechnet
 
                 string address = string.Join("\n", new[]
                 {
@@ -71,7 +71,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                     string.Join(' ', new[]{ p.Zip, p.City }.Where(s => !string.IsNullOrWhiteSpace(s)))
                 }.Where(s => !string.IsNullOrWhiteSpace(s)));
 
-                return new BillingRow(p.Name, address, p.Category, unit, qty, deliveries, PricingDefaults.DeliverySurcharge, additionalChargesSum, total);
+                return new BillingRow(p.Name, address, p.Category, unit, qty, deliveries, PricingDefaults.DeliverySurcharge, etagentraegerMenge, total);
             })
             .OrderBy(r => r.Name)
             .ToList();
@@ -119,7 +119,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                                 cols.RelativeColumn(2); // Essen Summe
                                 cols.RelativeColumn(1); // Lieferungen
                                 cols.RelativeColumn(2); // Lieferung Summe
-                                cols.RelativeColumn(2); // Zusatzkosten
+                                cols.RelativeColumn(1); // Etagenträger Menge
                                 cols.RelativeColumn(2); // Gesamt
                             });
 
@@ -133,7 +133,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                                 h.Cell().AlignRight().Text("Essen").SemiBold();
                                 h.Cell().AlignRight().Text("Liefer.").SemiBold();
                                 h.Cell().AlignRight().Text("Lieferung").SemiBold();
-                                h.Cell().AlignRight().Text("Zusatzk.").SemiBold();
+                                h.Cell().AlignRight().Text("Etagentr.").SemiBold();
                                 h.Cell().AlignRight().Text("Summe").SemiBold();
                             });
 
@@ -150,7 +150,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                                 table.Cell().Background(bg).AlignRight().Text(mealSum.ToString("C"));
                                 table.Cell().Background(bg).AlignRight().Text(r.DeliveryCount > 0 ? r.DeliveryCount.ToString() : "");
                                 table.Cell().Background(bg).AlignRight().Text(deliverySum > 0 ? deliverySum.ToString("C") : "");
-                                table.Cell().Background(bg).AlignRight().Text(r.AdditionalCharges > 0 ? r.AdditionalCharges.ToString("C") : "");
+                                table.Cell().Background(bg).AlignRight().Text(r.EtagentraegerMenge > 0 ? r.EtagentraegerMenge.ToString() : "");
                                 table.Cell().Background(bg).AlignRight().Text(r.Total.ToString("C"));
                             }
 

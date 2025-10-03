@@ -53,37 +53,8 @@
 
                                     <TextBlock Grid.Row="5" Grid.Column="0" Text="Indiv. Essenspreis (€):" VerticalAlignment="Center"/>
                                     <TextBox Grid.Row="5" Grid.Column="1" Watermark="Leer lassen für Standardpreis" Text="{Binding CustomMealPriceText, Mode=TwoWay}"/>
-                                    
-                                    <CheckBox Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="2" IsChecked="{Binding HatEtagentraeger, Mode=TwoWay}" Content="Hat Etagenträger?"/>
                                 </Grid>
-                                
-                                <!-- Etagenträger Details - Only visible when checkbox is checked -->
-                                <Border IsVisible="{Binding HatEtagentraeger}" BorderBrush="{DynamicResource ThemeBorderMidBrush}" BorderThickness="1" CornerRadius="4" Padding="16" Margin="0,12,0,0" Background="{DynamicResource ThemeControlAltHighBrush}">
-                                    <StackPanel Spacing="12">
-                                        <TextBlock Text="Etagenträger Details" FontWeight="SemiBold" FontSize="13"/>
-                                        
-                                        <StackPanel Spacing="10">
-                                            <TextBlock Text="Abrechnungsmonat:" FontWeight="Medium"/>
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <NumericUpDown Width="120" Minimum="1" Maximum="12" Value="{Binding EtagentraegerMonat, Mode=TwoWay}"/>
-                                                <TextBlock Text="/" VerticalAlignment="Center" FontSize="16"/>
-                                                <NumericUpDown Width="120" Minimum="2020" Maximum="2100" Value="{Binding EtagentraegerJahr, Mode=TwoWay}"/>
-                                            </StackPanel>
-                                        </StackPanel>
-                                        
-                                        <Grid ColumnDefinitions="*,*" ColumnSpacing="24">
-                                            <StackPanel Grid.Column="0" Spacing="8">
-                                                <TextBlock Text="Menge:" FontWeight="Medium"/>
-                                                <NumericUpDown Width="120" Minimum="1" Maximum="10" Value="{Binding EtagentraegerMenge, Mode=TwoWay}" HorizontalAlignment="Left"/>
-                                            </StackPanel>
-                                            
-                                            <StackPanel Grid.Column="1" Spacing="8">
-                                                <TextBlock Text="Preis pro Stück (€):" FontWeight="Medium"/>
-                                                <NumericUpDown Width="150" Minimum="0" Maximum="100" FormatString="F2" Value="{Binding EtagentraegerPreis, Mode=TwoWay}" HorizontalAlignment="Left"/>
-                                            </StackPanel>
-                                        </Grid>
-                                    </StackPanel>
-                                </Border>
+                                <!-- Etagenträger werden jetzt in einem separaten Tab verwaltet -->
 
                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                     <Button Content="Speichern" Command="{Binding SpeichernCommand}"/>
@@ -115,7 +86,7 @@
                     </StackPanel>
                 </ScrollViewer>
                 <TextBlock Grid.Row="1" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                           Text="Developed by Lechner Tobias v1.1.5.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                           Text="Developed by Lechner Tobias v1.2.0.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
@@ -157,7 +128,77 @@
                 <TextBlock Text="{Binding Status}" Foreground="Gray"/>
             </StackPanel>
             <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                       Text="Developed by Lechner Tobias v1.1.5.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                       Text="Developed by Lechner Tobias v1.2.0.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+            </Grid>
+        </TabItem>
+
+        <TabItem Header="Etagenträger">
+            <Grid RowDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Row="0" Spacing="12" Margin="16" DataContext="{Binding Etagentraeger}">
+                    <TextBlock Text="Etagenträger nachträglich hinzufügen" FontWeight="SemiBold" FontSize="14"/>
+                    <TextBlock Text="Hier können Etagenträger für Pensionisten nachträglich hinzugefügt werden, wenn diese bestätigen dass es passt." 
+                               TextWrapping="Wrap" Foreground="Gray" FontSize="12"/>
+
+                    <Border BorderBrush="{DynamicResource ThemeBorderLowBrush}" BorderThickness="1" CornerRadius="6" Padding="12" Background="{DynamicResource ThemeControlLowBrush}">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Neuen Etagenträger hinzufügen" FontWeight="SemiBold"/>
+                            <Grid ColumnDefinitions="Auto,2*,Auto,*,Auto,*,Auto,*,Auto" ColumnSpacing="12" RowSpacing="8">
+                                <TextBlock Grid.Column="0" Text="Person:" VerticalAlignment="Center"/>
+                                <ComboBox Grid.Column="1" ItemsSource="{Binding PersonenListe}" SelectedItem="{Binding SelectedPerson, Mode=TwoWay}" 
+                                         PlaceholderText="Pensionist auswählen">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <TextBlock Grid.Column="2" Text="Monat:" VerticalAlignment="Center"/>
+                                <NumericUpDown Grid.Column="3" Minimum="1" Maximum="12" Value="{Binding Monat, Mode=TwoWay}"/>
+
+                                <TextBlock Grid.Column="4" Text="Jahr:" VerticalAlignment="Center"/>
+                                <NumericUpDown Grid.Column="5" Minimum="2020" Maximum="2100" Value="{Binding Jahr, Mode=TwoWay}"/>
+
+                                <TextBlock Grid.Column="6" Text="Anzahl:" VerticalAlignment="Center"/>
+                                <NumericUpDown Grid.Column="7" Minimum="1" Maximum="10" Value="{Binding AnzahlTraeger, Mode=TwoWay}"/>
+
+                                <Button Grid.Column="8" Content="Hinzufügen" Command="{Binding HinzufuegenCommand}"/>
+                            </Grid>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button Content="Aktualisieren" Command="{Binding LadenCommand}"/>
+                                <TextBlock Text="{Binding Status}" Foreground="Gray" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="Vorhandene Etagenträger für aktuellen Monat" FontWeight="SemiBold"/>
+                </StackPanel>
+
+                <Border Grid.Row="1" BorderBrush="{DynamicResource ThemeBorderLowBrush}" BorderThickness="1" CornerRadius="6" Margin="16,0">
+                    <ListBox ItemsSource="{Binding EtagentraegerListe}" MinHeight="200" MaxHeight="400" DataContext="{Binding Etagentraeger}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="12,8" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource ThemeBorderLowBrush}">
+                                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{Binding Person.Name}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding Description}" FontSize="11" Foreground="Gray"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <TextBlock Text="{Binding Quantity}"/>
+                                                <TextBlock Text=" Etagenträger (nur Menge - kein Preis)" FontStyle="Italic" Foreground="Gray"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding Month, StringFormat='{}{0:MM/yyyy}'}" VerticalAlignment="Center" FontWeight="Medium"/>
+                                        <Button Grid.Column="2" Content="Löschen" Background="#FFEE5555" Foreground="White"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
+
+                <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
+                           Text="Developed by Lechner Tobias v1.2.0.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
@@ -183,7 +224,7 @@
                 <TextBlock Text="{Binding Status}" Foreground="Gray"/>
             </StackPanel>
             <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                       Text="Developed by Lechner Tobias v1.1.5.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                       Text="Developed by Lechner Tobias v1.2.0.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
     </TabControl>

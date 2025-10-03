@@ -10,6 +10,7 @@ public static class UiSetup
         services.AddTransient<PersonenViewModel>();
         services.AddTransient<ErfassungViewModel>();
         services.AddTransient<AbrechnungViewModel>();
+        services.AddTransient<EtagentraegerViewModel>();
         services.AddTransient<MainWindowViewModel>();
         return services;
     }

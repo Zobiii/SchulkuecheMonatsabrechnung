@@ -52,7 +52,8 @@ public partial class AbrechnungViewModel : ViewModelBase
             var rows = await _billing.CalculateMonthlyAsync(Jahr, Monat).ConfigureAwait(false);
             foreach (var r in rows)
             {
-                Zeilen.Add($"{r.Name} | {r.UnitPrice:C} x {r.Quantity} + {r.DeliveryCount} x {r.DeliverySurcharge:C} = {r.Total:C}");
+                var etagentraegerText = r.EtagentraegerMenge > 0 ? $" + {r.EtagentraegerMenge} Etagentr." : "";
+                Zeilen.Add($"{r.Name} | {r.UnitPrice:C} x {r.Quantity} + {r.DeliveryCount} x {r.DeliverySurcharge:C}{etagentraegerText} = {r.Total:C}");
             }
 
             SummeGesamt = rows.Sum(r => r.Total);

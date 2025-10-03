@@ -36,41 +36,7 @@ public partial class PersonenViewModel : ViewModelBase
     [ObservableProperty] private decimal? _customMealPrice;
     [ObservableProperty] private string _customMealPriceText = string.Empty;
     
-    // Etagenträger (Additional Charges) Properties
-    [ObservableProperty] private bool _hatEtagentraeger;
-    [ObservableProperty] private int _etagentraegerJahr = DateTime.Today.Year;
-    [ObservableProperty] private int _etagentraegerMonat = DateTime.Today.Month;
-    [ObservableProperty] private decimal _etagentraegerPreis = 15.00m; // Default Etagenträger price
-    [ObservableProperty] private int _etagentraegerMenge = 1;
-    
-    // Additional validation for Etagenträger with status reset
-    partial void OnEtagentraegerJahrChanged(int value)
-    {
-        if (value >= 2020 && value <= 2100)
-        {
-            // Clear status if value is now valid
-            if (Status?.Contains("Jahr muss zwischen") == true)
-                Status = null;
-        }
-        else
-        {
-            Status = "Jahr muss zwischen 2020 und 2100 liegen.";
-        }
-    }
-    
-    partial void OnEtagentraegerMonatChanged(int value)
-    {
-        if (value >= 1 && value <= 12)
-        {
-            // Clear status if value is now valid
-            if (Status?.Contains("Monat muss zwischen") == true)
-                Status = null;
-        }
-        else
-        {
-            Status = "Monat muss zwischen 1 und 12 liegen.";
-        }
-    }
+    // Etagenträger are now managed separately in their own tab/section
 
     public PersonenViewModel(IPersonRepository repo, IAdditionalChargeRepository chargeRepo)
     {
@@ -128,18 +94,8 @@ public partial class PersonenViewModel : ViewModelBase
                 await _repo.AddAsync(p).ConfigureAwait(false);
                 PersonenListe.Add(p);
                 SelectedPerson = p;
-                
-                // Add Etagenträger if specified
-                if (HatEtagentraeger)
-                {
-                    await AddEtagentraegerAsync(p.Id).ConfigureAwait(false);
-                }
-                
                 Status = "Person gespeichert.";
-                if (HatEtagentraeger)
-                {
-                    Status += $" Etagenträger für {EtagentraegerMonat:00}/{EtagentraegerJahr} hinzugefügt.";
-                }
+                // Note: Etagenträger werden separat nachträglich verwaltet
             }
             else
             {
@@ -164,25 +120,7 @@ public partial class PersonenViewModel : ViewModelBase
         }
     }
     
-    private async Task AddEtagentraegerAsync(int personId)
-    {
-        try
-        {
-            var charge = new AdditionalCharge
-            {
-                PersonId = personId,
-                Month = new DateOnly(EtagentraegerJahr, EtagentraegerMonat, 1),
-                Description = $"Etagenträger {EtagentraegerMonat:00}/{EtagentraegerJahr}",
-                UnitPrice = EtagentraegerPreis,
-                Quantity = EtagentraegerMenge
-            };
-            await _chargeRepo.AddAsync(charge).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            Status = $"Fehler beim Hinzufügen des Etagenträgers: {ex.Message}";
-        }
-    }
+    // AddEtagentraegerAsync removed - Etagenträger are now managed separately
 
     [RelayCommand]
     private void Neu()
@@ -195,12 +133,7 @@ public partial class PersonenViewModel : ViewModelBase
         CustomMealPrice = null;
         CustomMealPriceText = string.Empty;
         
-        // Reset Etagenträger fields
-        HatEtagentraeger = false;
-        EtagentraegerJahr = DateTime.Today.Year;
-        EtagentraegerMonat = DateTime.Today.Month;
-        EtagentraegerPreis = 15.00m;
-        EtagentraegerMenge = 1;
+        // Etagenträger are now managed separately
         
         Status = null;
     }
@@ -252,12 +185,7 @@ public partial class PersonenViewModel : ViewModelBase
         CustomMealPrice = value.CustomMealPrice;
         CustomMealPriceText = value.CustomMealPrice?.ToString("F2") ?? string.Empty;
         
-        // Reset Etagenträger fields when selecting a different person
-        HatEtagentraeger = false;
-        EtagentraegerJahr = DateTime.Today.Year;
-        EtagentraegerMonat = DateTime.Today.Month;
-        EtagentraegerPreis = 15.00m;
-        EtagentraegerMenge = 1;
+        // Etagenträger are now managed separately
         
         Status = null;
     }
