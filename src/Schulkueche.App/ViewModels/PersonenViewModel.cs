@@ -43,10 +43,16 @@ public partial class PersonenViewModel : ViewModelBase
     [ObservableProperty] private decimal _etagentraegerPreis = 15.00m; // Default Etagenträger price
     [ObservableProperty] private int _etagentraegerMenge = 1;
     
-    // Additional validation for Etagenträger
+    // Additional validation for Etagenträger with status reset
     partial void OnEtagentraegerJahrChanged(int value)
     {
-        if (value < 2020 || value > 2100)
+        if (value >= 2020 && value <= 2100)
+        {
+            // Clear status if value is now valid
+            if (Status?.Contains("Jahr muss zwischen") == true)
+                Status = null;
+        }
+        else
         {
             Status = "Jahr muss zwischen 2020 und 2100 liegen.";
         }
@@ -54,7 +60,13 @@ public partial class PersonenViewModel : ViewModelBase
     
     partial void OnEtagentraegerMonatChanged(int value)
     {
-        if (value < 1 || value > 12)
+        if (value >= 1 && value <= 12)
+        {
+            // Clear status if value is now valid
+            if (Status?.Contains("Monat muss zwischen") == true)
+                Status = null;
+        }
+        else
         {
             Status = "Monat muss zwischen 1 und 12 liegen.";
         }
@@ -239,6 +251,14 @@ public partial class PersonenViewModel : ViewModelBase
         Category = value.Category;
         CustomMealPrice = value.CustomMealPrice;
         CustomMealPriceText = value.CustomMealPrice?.ToString("F2") ?? string.Empty;
+        
+        // Reset Etagenträger fields when selecting a different person
+        HatEtagentraeger = false;
+        EtagentraegerJahr = DateTime.Today.Year;
+        EtagentraegerMonat = DateTime.Today.Month;
+        EtagentraegerPreis = 15.00m;
+        EtagentraegerMenge = 1;
+        
         Status = null;
     }
 

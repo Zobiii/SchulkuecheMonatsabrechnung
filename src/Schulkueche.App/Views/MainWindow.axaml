@@ -25,7 +25,7 @@
                         <Border BorderBrush="{DynamicResource ThemeBorderLowBrush}" BorderThickness="1" CornerRadius="6" Padding="12" Background="{DynamicResource ThemeControlLowBrush}">
                             <StackPanel Spacing="10">
                                 <TextBlock Text="Person anlegen / bearbeiten" FontWeight="SemiBold"/>
-                                <Grid ColumnDefinitions="160,*,Auto,120,Auto,160" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+                                <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" VerticalAlignment="Center"/>
                                     <TextBox Grid.Row="0" Grid.Column="1" Watermark="Vollständiger Name" Text="{Binding Name, Mode=TwoWay}"/>
 
@@ -97,7 +97,7 @@
 
                         <TextBlock Margin="0,16,0,4" Text="Vorhandene Personen" FontWeight="SemiBold"/>
                         <Border BorderBrush="{DynamicResource ThemeBorderLowBrush}" BorderThickness="1" CornerRadius="6">
-                            <ListBox ItemsSource="{Binding GefiltertePersonen}" SelectedItem="{Binding SelectedPerson, Mode=TwoWay}" Height="240">
+                            <ListBox ItemsSource="{Binding GefiltertePersonen}" SelectedItem="{Binding SelectedPerson, Mode=TwoWay}" MinHeight="200" MaxHeight="300">
                                 <ListBox.Styles>
                                     <Style Selector="ListBox > ListBoxItem:nth-child(odd)">
                                         <Setter Property="Background" Value="#12FFFFFF"/>
@@ -115,7 +115,7 @@
                     </StackPanel>
                 </ScrollViewer>
                 <TextBlock Grid.Row="1" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                           Text="Developed by Lechner Tobias v1.1.4.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                           Text="Developed by Lechner Tobias v1.1.5.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
@@ -131,7 +131,7 @@
                     <Button Content="Speichern" Command="{Binding SpeichernCommand}"/>
                 </StackPanel>
 
-                <ScrollViewer Grid.Row="1" Height="400">
+                <ScrollViewer Grid.Row="1" MinHeight="300" MaxHeight="500">
                     <ListBox x:Name="ErfassungList" ItemsSource="{Binding Zeilen}" SelectionMode="Single">
                         <ListBox.Styles>
                             <!-- zebra stripes: very light overlay on odd rows -->
@@ -157,7 +157,7 @@
                 <TextBlock Text="{Binding Status}" Foreground="Gray"/>
             </StackPanel>
             <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                       Text="Developed by Lechner Tobias v1.1.4.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                       Text="Developed by Lechner Tobias v1.1.5.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
@@ -168,11 +168,11 @@
                     <TextBlock Text="Monat:" VerticalAlignment="Center"/>
                     <NumericUpDown Minimum="1" Maximum="12" Value="{Binding Monat, Mode=TwoWay}"/>
                     <TextBlock Text="Jahr:" VerticalAlignment="Center"/>
-                    <NumericUpDown Minimum="2024" Maximum="2100" Value="{Binding Jahr, Mode=TwoWay}"/>
+                    <NumericUpDown Minimum="2020" Maximum="2100" Value="{Binding Jahr, Mode=TwoWay}"/>
                     <Button Content="Berechnen" Command="{Binding BerechnenCommand}"/>
                     <Button Content="PDF exportieren" Command="{Binding ExportPdfCommand}" IsEnabled="{Binding KannExportieren}"/>
                 </StackPanel>
-                <ListBox Grid.Row="1" ItemsSource="{Binding Zeilen}" Height="400"/>
+                <ListBox Grid.Row="1" ItemsSource="{Binding Zeilen}" MinHeight="300" MaxHeight="500"/>
                 <StackPanel Orientation="Vertical" Spacing="4">
                     <TextBlock Text="Summen" FontWeight="Bold"/>
                     <TextBlock Text="{Binding SummePensionisten, StringFormat='Pensionisten: {0:C}'}"/>
@@ -183,7 +183,7 @@
                 <TextBlock Text="{Binding Status}" Foreground="Gray"/>
             </StackPanel>
             <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                       Text="Developed by Lechner Tobias v1.1.4.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                       Text="Developed by Lechner Tobias v1.1.5.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
     </TabControl>
