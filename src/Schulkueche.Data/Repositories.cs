@@ -101,6 +101,7 @@ internal sealed class AdditionalChargeRepository(KitchenDbContext db) : IAdditio
         var targetMonth = new DateOnly(year, month, 1);
         return db.AdditionalCharges.Include(c => c.Person)
             .Where(c => c.Month == targetMonth)
+            .Where(c => c.Person != null) // Ensure Person is not null
             .OrderBy(c => c.Person!.Name)
             .ToListAsync(ct);
     }

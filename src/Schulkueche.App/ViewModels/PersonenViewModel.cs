@@ -42,6 +42,23 @@ public partial class PersonenViewModel : ViewModelBase
     [ObservableProperty] private int _etagentraegerMonat = DateTime.Today.Month;
     [ObservableProperty] private decimal _etagentraegerPreis = 15.00m; // Default Etagenträger price
     [ObservableProperty] private int _etagentraegerMenge = 1;
+    
+    // Additional validation for Etagenträger
+    partial void OnEtagentraegerJahrChanged(int value)
+    {
+        if (value < 2020 || value > 2100)
+        {
+            Status = "Jahr muss zwischen 2020 und 2100 liegen.";
+        }
+    }
+    
+    partial void OnEtagentraegerMonatChanged(int value)
+    {
+        if (value < 1 || value > 12)
+        {
+            Status = "Monat muss zwischen 1 und 12 liegen.";
+        }
+    }
 
     public PersonenViewModel(IPersonRepository repo, IAdditionalChargeRepository chargeRepo)
     {

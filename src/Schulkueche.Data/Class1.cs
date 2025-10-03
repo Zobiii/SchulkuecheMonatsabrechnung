@@ -54,6 +54,8 @@ public class KitchenDbContext : DbContext
             b.Property(x => x.Month).HasConversion(
                 v => v.ToDateTime(TimeOnly.MinValue),
                 v => DateOnly.FromDateTime(v));
+            b.HasIndex(x => new { x.PersonId, x.Month }); // Performance index for queries
+            b.HasIndex(x => x.Month); // Performance index for monthly queries
         });
     }
 }
