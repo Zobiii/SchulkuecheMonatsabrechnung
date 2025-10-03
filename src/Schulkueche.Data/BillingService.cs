@@ -90,65 +90,75 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
         {
             container.Page(page =>
             {
-                page.Margin(28);
+                page.Margin(25);
                 page.Size(PageSizes.A4);
-                page.DefaultTextStyle(x => x.FontSize(10));
+                page.DefaultTextStyle(x => x.FontSize(10).FontFamily("Arial"));
 
-                page.Header().Column(header =>
+                page.Header().PaddingBottom(20).Column(header =>
                 {
-                    header.Item().Text($"Gemeinde-Küche").SemiBold().FontSize(14);
-                    header.Item().Text($"Sammelabrechnung {monthName}");
+                    header.Item().AlignCenter().Text($"Gemeinde-Küche Munderfing").SemiBold().FontSize(18).FontColor(Colors.Blue.Darken2);
+                    header.Item().PaddingTop(5).AlignCenter().Text($"Sammelabrechnung {monthName}").FontSize(14).FontColor(Colors.Grey.Darken1);
+                    header.Item().PaddingTop(10).LineHorizontal(1).LineColor(Colors.Grey.Lighten1);
                 });
 
-                page.Content().Column(col =>
+                page.Content().PaddingTop(15).Column(col =>
                 {
                     void Section(string title, IEnumerable<BillingRow> items)
                     {
                         var list = items.ToList();
                         if (!list.Any()) return;
 
-                        col.Item().PaddingTop(8).Text(title).SemiBold();
+                        col.Item().PaddingTop(20).PaddingBottom(8).Text(title).SemiBold().FontSize(12).FontColor(Colors.Blue.Darken1);
                         col.Item().Table(table =>
                         {
                             table.ColumnsDefinition(cols =>
                             {
-                                cols.RelativeColumn(3); // Name
-                                cols.RelativeColumn(4); // Adresse
-                                cols.RelativeColumn(1); // Menge
-                                cols.RelativeColumn(2); // Essen Summe
-                                cols.RelativeColumn(1); // Lieferungen
-                                cols.RelativeColumn(2); // Lieferung Summe
-                                cols.RelativeColumn(1); // Etagenträger Menge
-                                cols.RelativeColumn(2); // Gesamt
+                                cols.RelativeColumn(4); // Name
+                                cols.RelativeColumn(4.5f); // Anschrift (kleiner)
+                                cols.RelativeColumn(1.5f); // Anzahl (größer)
+                                cols.RelativeColumn(1.8f); // Essen Summe
+                                cols.RelativeColumn(1.2f); // Lieferungen
+                                cols.RelativeColumn(1.5f); // Lieferung Summe (kleiner)
+                                cols.RelativeColumn(1.2f); // Etagenträger Menge
+                                cols.RelativeColumn(1.8f); // Total
                             });
 
                             // Header
                             table.Header(h =>
                             {
-                                h.Cell().Text("Name").SemiBold();
-                                h.Cell().Text("Anschrift").SemiBold();
-                                h.Cell().AlignRight().Text("Menge").SemiBold();
-                                h.Cell().AlignRight().Text("Essen").SemiBold();
-                                h.Cell().AlignRight().Text("Liefer.").SemiBold();
-                                h.Cell().AlignRight().Text("Lieferung").SemiBold();
-                                h.Cell().AlignRight().Text("Etagentr.").SemiBold();
-                                h.Cell().AlignRight().Text("Summe").SemiBold();
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).Text("Name").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).Text("Anschrift").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Anzahl").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Essen €").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Lief.").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Lief. €").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Etag.").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Total").SemiBold().FontSize(9);
                             });
 
                             var rowIndex = 0;
                             foreach (var r in list)
                             {
-                                var bg = (rowIndex++ % 2 == 0) ? Colors.Grey.Lighten4 : Colors.White;
-                                table.Cell().Background(bg).Text(r.Name);
-                                table.Cell().Background(bg).Text(r.Address ?? string.Empty);
-                                table.Cell().Background(bg).AlignRight().Text(r.Quantity.ToString());
+                                var bg = (rowIndex % 2 == 0) ? Colors.White : Colors.Grey.Lighten5;
+                                var borderColor = Colors.Grey.Lighten2;
+                                
+                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).Text(r.Name).FontSize(8);
+                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).Text(r.Address ?? string.Empty).FontSize(8);
+                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.Quantity > 0 ? r.Quantity.ToString() : "-").FontSize(8);
+                                
                                 var mealSum = r.UnitPrice * r.Quantity;
+                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(mealSum > 0 ? mealSum.ToString("C") : "-").FontSize(8);
+                                
+                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.DeliveryCount > 0 ? r.DeliveryCount.ToString() : "-").FontSize(8);
+                                
                                 var deliverySum = r.DeliveryCount * r.DeliverySurcharge;
-                                table.Cell().Background(bg).AlignRight().Text(mealSum.ToString("C"));
-                                table.Cell().Background(bg).AlignRight().Text(r.DeliveryCount > 0 ? r.DeliveryCount.ToString() : "");
-                                table.Cell().Background(bg).AlignRight().Text(deliverySum > 0 ? deliverySum.ToString("C") : "");
-                                table.Cell().Background(bg).AlignRight().Text(r.EtagentraegerMenge > 0 ? r.EtagentraegerMenge.ToString() : "");
-                                table.Cell().Background(bg).AlignRight().Text(r.Total.ToString("C"));
+                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(deliverySum > 0 ? deliverySum.ToString("C") : "-").FontSize(8);
+                                
+                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.EtagentraegerMenge > 0 ? r.EtagentraegerMenge.ToString() : "-").FontSize(8);
+                                
+                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.Total.ToString("C")).SemiBold().FontSize(8);
+                                
+                                rowIndex++;
                             }
 
                             // No section totals per request
@@ -162,19 +172,27 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                     // No overall totals per request
                 });
 
-                page.Footer().Row(r =>
+                page.Footer().PaddingTop(20).Row(r =>
                 {
-                    r.RelativeItem().AlignLeft().Text(t =>
+                    r.RelativeItem().Column(c =>
                     {
-                        t.Span("Auto-created by Schulkueche Monatsabrechnung").FontSize(9);
+                        c.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+                        c.Item().PaddingTop(8).AlignLeft().Text(t =>
+                        {
+                            t.Span("Erstellt mit Schulkueche Monatsabrechnung v1.2.2.0").FontSize(8).FontColor(Colors.Grey.Darken1);
+                        });
                     });
 
-                    r.RelativeItem().AlignRight().Text(txt =>
+                    r.RelativeItem().Column(c =>
                     {
-                        txt.Span("Seite ").FontSize(9);
-                        txt.CurrentPageNumber();
-                        txt.Span(" / ").FontSize(9);
-                        txt.TotalPages();
+                        c.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
+                        c.Item().PaddingTop(8).AlignRight().Text(txt =>
+                        {
+                            txt.Span("Seite ").FontSize(8).FontColor(Colors.Grey.Darken1);
+                            txt.CurrentPageNumber().FontColor(Colors.Grey.Darken1);
+                            txt.Span(" von ").FontSize(8).FontColor(Colors.Grey.Darken1);
+                            txt.TotalPages().FontColor(Colors.Grey.Darken1);
+                        });
                     });
                 });
             });

@@ -86,7 +86,7 @@
                     </StackPanel>
                 </ScrollViewer>
                 <TextBlock Grid.Row="1" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                           Text="Developed by Lechner Tobias v1.2.1.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                           Text="Developed by Lechner Tobias v1.2.2.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
@@ -128,7 +128,7 @@
                 <TextBlock Text="{Binding Status}" Foreground="Gray"/>
             </StackPanel>
             <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                       Text="Developed by Lechner Tobias v1.2.1.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                       Text="Developed by Lechner Tobias v1.2.2.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
@@ -201,7 +201,7 @@
                 </Border>
 
                 <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                           Text="Developed by Lechner Tobias v1.2.1.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
+                           Text="Developed by Lechner Tobias v1.2.2.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
