@@ -54,3 +54,5 @@ TestResult*/
 # Warp terminal specific files
 WARP.md
 
+email-config.json
+

@@ -27,6 +27,10 @@ public static class DataSetup
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IAdditionalChargeRepository, AdditionalChargeRepository>();
         services.AddScoped<IBillingService, BillingService>();
+        
+        // Authentication services
+        services.AddScoped<EmailService>();
+        services.AddScoped<AuthenticationService>();
 
         // QuestPDF license (community)
         QuestPDF.Settings.License = LicenseType.Community;

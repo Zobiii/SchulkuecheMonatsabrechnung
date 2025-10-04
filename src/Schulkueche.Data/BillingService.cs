@@ -179,7 +179,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                         c.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
                         c.Item().PaddingTop(8).AlignLeft().Text(t =>
                         {
-                            t.Span("Erstellt mit Schulkueche Monatsabrechnung v1.2.2.0").FontSize(8).FontColor(Colors.Grey.Darken1);
+                            t.Span("Erstellt mit Schulkueche Monatsabrechnung v1.3.0.0").FontSize(8).FontColor(Colors.Grey.Darken1);
                         });
                     });
 

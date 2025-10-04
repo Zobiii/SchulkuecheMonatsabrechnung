@@ -113,6 +113,7 @@ public partial class PersonenViewModel : ViewModelBase
             }
 
             OnPropertyChanged(nameof(GefiltertePersonen));
+            OnPropertyChanged(nameof(PersonenCount));
         }
         catch (Exception ex)
         {
@@ -151,6 +152,7 @@ public partial class PersonenViewModel : ViewModelBase
             if (selectedId.HasValue)
                 SelectedPerson = PersonenListe.FirstOrDefault(p => p.Id == selectedId.Value);
             OnPropertyChanged(nameof(GefiltertePersonen));
+            OnPropertyChanged(nameof(PersonenCount));
         }
         catch (Exception ex)
         {
@@ -200,6 +202,7 @@ public partial class PersonenViewModel : ViewModelBase
             PersonenListe.Remove(SelectedPerson);
             Neu();
             OnPropertyChanged(nameof(GefiltertePersonen));
+            OnPropertyChanged(nameof(PersonenCount));
             Status = "Person gelöscht.";
         }
         catch (Exception ex)
@@ -207,6 +210,9 @@ public partial class PersonenViewModel : ViewModelBase
             Status = $"Fehler beim Löschen: {ex.Message}";
         }
     }
+
+    // Anzahl der Personen
+    public int PersonenCount => PersonenListe.Count;
 
     // Gefilterte Ansicht (Suche)
     public System.Collections.Generic.IEnumerable<Person> GefiltertePersonen

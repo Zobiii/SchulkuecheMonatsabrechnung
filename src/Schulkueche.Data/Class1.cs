@@ -23,6 +23,7 @@ public class KitchenDbContext : DbContext
     public DbSet<Person> Persons => Set<Person>();
     public DbSet<MealOrder> MealOrders => Set<MealOrder>();
     public DbSet<AdditionalCharge> AdditionalCharges => Set<AdditionalCharge>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -56,6 +57,16 @@ public class KitchenDbContext : DbContext
                 v => DateOnly.FromDateTime(v));
             b.HasIndex(x => new { x.PersonId, x.Month }); // Performance index for queries
             b.HasIndex(x => x.Month); // Performance index for monthly queries
+        });
+
+        modelBuilder.Entity<User>(b =>
+        {
+            b.Property(u => u.Username).IsRequired().HasMaxLength(50);
+            b.Property(u => u.PasswordHash).IsRequired().HasMaxLength(255);
+            b.Property(u => u.Email).IsRequired().HasMaxLength(255);
+            b.Property(u => u.VerificationCode).HasMaxLength(10);
+            b.HasIndex(u => u.Username).IsUnique();
+            b.HasIndex(u => u.Email).IsUnique();
         });
     }
 }

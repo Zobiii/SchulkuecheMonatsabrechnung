@@ -79,6 +79,33 @@ public class AdditionalCharge
 }
 
 /// <summary>
+/// Represents a user who can log into the system
+/// </summary>
+public class User
+{
+    public int Id { get; set; }
+    
+    [MaxLength(50)]
+    public required string Username { get; set; }
+    
+    [MaxLength(255)]
+    public required string PasswordHash { get; set; }
+    
+    [MaxLength(255)]
+    public required string Email { get; set; }
+    
+    public bool IsAdmin { get; set; } = false;
+    public bool IsVerified { get; set; } = false;
+    
+    [MaxLength(10)]
+    public string? VerificationCode { get; set; }
+    
+    public DateTime? VerificationCodeExpiry { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? LastLoginAt { get; set; }
+}
+
+/// <summary>
 /// Static constants for business defaults.
 /// Values can be overridden via configuration later.
 /// </summary>

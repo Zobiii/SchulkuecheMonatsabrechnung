@@ -11,6 +11,9 @@ public static class UiSetup
         services.AddTransient<ErfassungViewModel>();
         services.AddTransient<AbrechnungViewModel>();
         services.AddTransient<EtagentraegerViewModel>();
+        services.AddTransient<DashboardViewModel>();
+        services.AddTransient<AdminViewModel>();
+        services.AddTransient<LoginViewModel>();
         services.AddTransient<MainWindowViewModel>();
         return services;
     }

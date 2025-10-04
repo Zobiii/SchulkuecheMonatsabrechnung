@@ -3,11 +3,13 @@
         xmlns:vm="using:Schulkueche.App.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
         x:Class="Schulkueche.App.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-    Title="Gemeinde-Küche">
+        Title="Gemeinde-Küche"
+        Width="1200" Height="800"
+        WindowStartupLocation="CenterScreen">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -15,7 +17,8 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TabControl SelectionChanged="OnTabSelectionChanged">
+    <Grid RowDefinitions="*,Auto">
+        <TabControl Grid.Row="0" SelectionChanged="OnTabSelectionChanged">
         <TabItem Header="Personen">
             <Grid RowDefinitions="* ,Auto">
                 <ScrollViewer Grid.Row="0">
@@ -85,8 +88,6 @@
                         </Border>
                     </StackPanel>
                 </ScrollViewer>
-                <TextBlock Grid.Row="1" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                           Text="Developed by Lechner Tobias v1.2.2.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
@@ -127,8 +128,6 @@
 
                 <TextBlock Text="{Binding Status}" Foreground="Gray"/>
             </StackPanel>
-            <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                       Text="Developed by Lechner Tobias v1.2.2.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
@@ -199,9 +198,6 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </Border>
-
-                <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                           Text="Developed by Lechner Tobias v1.2.2.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
 
@@ -226,10 +222,36 @@
                 </StackPanel>
                 <TextBlock Text="{Binding Status}" Foreground="Gray"/>
             </StackPanel>
-            <TextBlock Grid.Row="2" Margin="8,4" FontSize="10" Foreground="Gray" HorizontalAlignment="Left"
-                       Text="Developed by Lechner Tobias v1.2.0.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"/>
             </Grid>
         </TabItem>
-    </TabControl>
+        </TabControl>
+        
+        <!-- Status Bar -->
+        <Border Grid.Row="1" Background="{DynamicResource ThemeControlLowBrush}" 
+               BorderBrush="{DynamicResource ThemeBorderLowBrush}" 
+               BorderThickness="0,1,0,0" 
+               Padding="12,6">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" 
+                          Text="Developed by Lechner Tobias v1.3.0.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"
+                          FontSize="10" 
+                          Foreground="Gray" 
+                          VerticalAlignment="Center"/>
+                          
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                    <TextBlock Text="|" 
+                              FontSize="10" 
+                              Foreground="Gray" 
+                              VerticalAlignment="Center"/>
+                              
+                    <TextBlock Text="{Binding CurrentUser.Username, StringFormat='Benutzer: {0}', FallbackValue='Benutzer: Unbekannt'}" 
+                              FontSize="10" 
+                              Foreground="Gray" 
+                              FontWeight="SemiBold"
+                              VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
 
 </Window>

@@ -1,8 +1,9 @@
+using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
 using Schulkueche.App.ViewModels;
 using Schulkueche.App.Views;
@@ -45,13 +46,44 @@ public partial class App : Application
             {
                 var db = scope.ServiceProvider.GetRequiredService<KitchenDbContext>();
                 DbInitializer.EnsureDatabaseUpdatedAsync(db).GetAwaiter().GetResult();
+                
+                // Initialize default admin user
+                var authService = scope.ServiceProvider.GetRequiredService<AuthenticationService>();
+                authService.InitializeDefaultUserAsync().GetAwaiter().GetResult();
             }
 
-            var vm = ActivatorUtilities.CreateInstance<MainWindowViewModel>(_host.Services);
-            desktop.MainWindow = new MainWindow { DataContext = vm };
+            // Show login window first
+            ShowLoginWindow(desktop);
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void ShowLoginWindow(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        var loginViewModel = ActivatorUtilities.CreateInstance<LoginViewModel>(_host.Services);
+        var loginWindow = new LoginWindow { DataContext = loginViewModel };
+        
+        // Handle successful login
+        loginViewModel.LoginSuccessful += (sender, user) =>
+        {
+            // Create main window
+            var mainViewModel = ActivatorUtilities.CreateInstance<MainWindowViewModel>(_host.Services);
+            mainViewModel.CurrentUser = user; // Store current user
+            
+            var mainWindow = new MainWindow { DataContext = mainViewModel };
+            
+            // Show main window first
+            mainWindow.Show();
+            
+            // Set new main window
+            desktop.MainWindow = mainWindow;
+            
+            // Close login window
+            loginWindow.Close();
+        };
+        
+        desktop.MainWindow = loginWindow;
     }
 
     private void DisableAvaloniaDataAnnotationValidation()
