@@ -33,13 +33,12 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
         var orders = await db.MealOrders.Include(o => o.Person)
             .Where(o => o.Date >= first && o.Date < next)
             .ToListAsync(ct);
-            
-        // Get additional charges for the month
+
         var additionalCharges = await db.AdditionalCharges.Include(c => c.Person)
             .Where(c => c.Month == first)
             .ToListAsync(ct);
         var chargesByPerson = additionalCharges.GroupBy(c => c.PersonId)
-            .ToDictionary(g => g.Key, g => g.Sum(c => c.Quantity)); // Nur Menge, kein Preis
+            .ToDictionary(g => g.Key, g => g.Sum(c => c.Quantity));
 
         var rows = orders
             .GroupBy(o => o.PersonId)
@@ -51,7 +50,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                 {
                     throw new InvalidOperationException($"Person data missing for PersonId {firstOrder.PersonId}. This indicates a data integrity issue.");
                 }
-                
+
                 var unit = p.CustomMealPrice ?? p.Category switch
                 {
                     PersonCategory.Pensioner => PricingDefaults.PensionerMealPrice,
@@ -63,7 +62,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                 var deliveries = g.Count(x => x.Delivery);
                 var deliverySum = deliveries * PricingDefaults.DeliverySurcharge;
                 var etagentraegerMenge = chargesByPerson.GetValueOrDefault(p.Id, 0);
-                var total = unit * qty + deliverySum; // Etagenträger werden NICHT verrechnet
+                var total = unit * qty + deliverySum;
 
                 string address = string.Join("\n", new[]
                 {
@@ -83,8 +82,6 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
     {
         var rows = await CalculateMonthlyAsync(year, month, ct);
         var monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
-
-        // Totals removed per request
 
         var doc = Document.Create(container =>
         {
@@ -141,35 +138,31 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                             {
                                 var bg = (rowIndex % 2 == 0) ? Colors.White : Colors.Grey.Lighten5;
                                 var borderColor = Colors.Grey.Lighten2;
-                                
+
                                 table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).Text(r.Name).FontSize(8);
                                 table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).Text(r.Address ?? string.Empty).FontSize(8);
                                 table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.Quantity > 0 ? r.Quantity.ToString() : "-").FontSize(8);
-                                
+
                                 var mealSum = r.UnitPrice * r.Quantity;
                                 table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(mealSum > 0 ? mealSum.ToString("C") : "-").FontSize(8);
-                                
+
                                 table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.DeliveryCount > 0 ? r.DeliveryCount.ToString() : "-").FontSize(8);
-                                
+
                                 var deliverySum = r.DeliveryCount * r.DeliverySurcharge;
                                 table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(deliverySum > 0 ? deliverySum.ToString("C") : "-").FontSize(8);
-                                
+
                                 table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.EtagentraegerMenge > 0 ? r.EtagentraegerMenge.ToString() : "-").FontSize(8);
-                                
+
                                 table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.Total.ToString("C")).SemiBold().FontSize(8);
-                                
+
                                 rowIndex++;
                             }
-
-                            // No section totals per request
                         });
                     }
 
                     Section("Pensionisten", rows.Where(r => r.Category == PersonCategory.Pensioner));
                     Section("Kindergruppe", rows.Where(r => r.Category == PersonCategory.ChildGroup));
                     Section("Gratis", rows.Where(r => r.Category == PersonCategory.FreeMeal));
-
-                    // No overall totals per request
                 });
 
                 page.Footer().PaddingTop(20).Row(r =>
@@ -179,7 +172,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                         c.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
                         c.Item().PaddingTop(8).AlignLeft().Text(t =>
                         {
-                            t.Span("Erstellt mit Schulkueche Monatsabrechnung v1.3.0.0").FontSize(8).FontColor(Colors.Grey.Darken1);
+                            t.Span("Erstellt mit Schulkueche Monatsabrechnung v1.3.1.0").FontSize(8).FontColor(Colors.Grey.Darken1);
                         });
                     });
 

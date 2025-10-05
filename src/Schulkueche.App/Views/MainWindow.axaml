@@ -233,7 +233,7 @@
                Padding="12,6">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Grid.Column="0" 
-                          Text="Developed by Lechner Tobias v1.3.0.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"
+                          Text="Developed by Lechner Tobias v1.3.1.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"
                           FontSize="10" 
                           Foreground="Gray" 
                           VerticalAlignment="Center"/>
