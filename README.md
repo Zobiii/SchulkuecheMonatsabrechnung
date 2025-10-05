@@ -250,7 +250,7 @@ dotnet run --project src/Schulkueche.App --configuration Debug
 ### **Repository**
 - **GitHub**: [https://github.com/Zobiii/SchulkuecheApp](https://github.com/Zobiii/SchulkuecheApp)
 - **Entwickler**: Lechner Tobias
-- **Lizenz**: noch nicht bestimmt
+- **Lizenz**: GNU Affero General Public License v3 (AGPL-3.0)
 
 ### **Entwicklungsrichtlinien**
 - Siehe `WARP.md` für detaillierte Warp Terminal Workflows
@@ -260,4 +260,30 @@ dotnet run --project src/Schulkueche.App --configuration Debug
 
 ---
 
-**© 2025 Lechner Tobias | Entwickelt mit ❤️ und Avalonia UI**
+## ⚔️ **Lizenz**
+
+Dieses Projekt ist unter der **GNU Affero General Public License v3.0** lizenziert.
+
+```
+Schulkueche Monatsabrechnung - Community kitchen management system
+Copyright (C) 2025 Lechner Tobias
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+```
+
+**Network Server Requirement**: If you run a modified version of this software on a publicly accessible server, you must provide the source code of your modified version to users of that server.
+
+---
+
+**© 2025 Lechner Tobias | Licensed under AGPL-3.0 | Entwickelt mit ❤️ und Avalonia UI**
