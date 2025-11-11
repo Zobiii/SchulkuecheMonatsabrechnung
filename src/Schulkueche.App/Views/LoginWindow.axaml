@@ -74,7 +74,7 @@
                         <TextBox x:Name="UsernameTextBox" 
                                 Text="{Binding Username}"
                                 Watermark="Benutzername eingeben"
-                                Padding="12" FontSize="14"
+                                Padding="12,10,0,0" FontSize="14"
                                 Height="40" CornerRadius="6"/>
                     </StackPanel>
                     
@@ -85,10 +85,9 @@
                                 Text="{Binding Password}"
                                 Watermark="Passwort eingeben"
                                 PasswordChar="*"
-                                Padding="12" FontSize="14"
+                                Padding="12,10,0,0" FontSize="14"
                                 Height="40" CornerRadius="6"/>
                     </StackPanel>
-                    
                     <Button Content="Anmelden" 
                            Command="{Binding LoginCommand}"
                            Classes="accent"
@@ -98,20 +97,12 @@
                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                            Margin="0,8,0,0"/>
                     
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="16" Margin="0,16,0,0">
-                        <Button Grid.Column="0" Content="Neuer Benutzer"
-                               Command="{Binding ShowRegisterCommand}"
-                               Padding="10" FontSize="13"
-                               CornerRadius="6" Height="40"
-                               HorizontalContentAlignment="Center"/>
-                               
-                        <Button Grid.Column="1" Content="Passwort vergessen"
-                               Command="{Binding ShowPasswordResetCommand}"
-                               Margin="55,0,0,0"
-                               Padding="10" FontSize="13"
-                               CornerRadius="6" Height="40"
-                               HorizontalContentAlignment="Center"/>
-                    </Grid>
+                    <Button Content="Neuer Benutzer"
+                           Command="{Binding ShowRegisterCommand}"
+                           Padding="16,12" FontSize="13"
+                           CornerRadius="6" Height="42"
+                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                           Margin="0,8,0,0"/>
                 </StackPanel>
             </StackPanel>
             
@@ -127,15 +118,6 @@
                                   Foreground="{DynamicResource ThemeForegroundBrush}"/>
                         <TextBox Text="{Binding NewUsername}"
                                 Watermark="Gewünschter Benutzername"
-                                Padding="12" FontSize="14"
-                                Height="40" CornerRadius="6"/>
-                    </StackPanel>
-                    
-                    <StackPanel>
-                        <TextBlock Text="E-Mail" FontWeight="Medium" Margin="0,0,0,6" 
-                                  Foreground="{DynamicResource ThemeForegroundBrush}"/>
-                        <TextBox Text="{Binding NewEmail}"
-                                Watermark="E-Mail-Adresse"
                                 Padding="12" FontSize="14"
                                 Height="40" CornerRadius="6"/>
                     </StackPanel>
@@ -176,133 +158,6 @@
                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                            Margin="0,8,0,0"/>
                 </StackPanel>
-            </StackPanel>
-            
-            <!-- Email Verification Form -->
-            <StackPanel IsVisible="{Binding IsVerificationMode}">
-                <TextBlock Text="E-Mail Verifizierung" FontSize="24" FontWeight="SemiBold" 
-                          HorizontalAlignment="Center" Margin="0,0,0,25"
-                          Foreground="{DynamicResource ThemeForegroundBrush}"/>
-                
-                <TextBlock Text="Ein Verifizierungscode wurde an Ihre E-Mail gesendet."
-                          TextWrapping="Wrap" HorizontalAlignment="Center" 
-                          Margin="0,0,0,35" FontSize="14"
-                          Foreground="{DynamicResource ThemeForegroundLowBrush}"/>
-                
-                <StackPanel Spacing="20">
-                    <StackPanel>
-                        <TextBlock Text="Benutzername" FontWeight="Medium" Margin="0,0,0,6" 
-                                  Foreground="{DynamicResource ThemeForegroundBrush}"/>
-                        <TextBox Text="{Binding VerificationUsername}"
-                                Watermark="Ihr Benutzername"
-                                Padding="12" FontSize="14"
-                                Height="40" CornerRadius="6"/>
-                    </StackPanel>
-                    
-                    <StackPanel>
-                        <TextBlock Text="Verifizierungscode" FontWeight="Medium" Margin="0,0,0,6" 
-                                  Foreground="{DynamicResource ThemeForegroundBrush}"/>
-                        <TextBox Text="{Binding VerificationCode}"
-                                Watermark="6-stelliger Code"
-                                Padding="12" FontSize="16" FontFamily="Consolas"
-                                Height="40" CornerRadius="6"/>
-                    </StackPanel>
-                    
-                    <Button Content="Verifizieren" 
-                           Command="{Binding VerifyCommand}"
-                           Classes="accent"
-                           Padding="20,16" FontSize="14" FontWeight="Medium"
-                           CornerRadius="6" Height="52"
-                           HorizontalAlignment="Stretch"
-                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                           Margin="0,8,0,0"/>
-                           
-                    <Button Content="← Zurück zur Anmeldung"
-                           Command="{Binding ShowLoginCommand}"
-                           Padding="16,12" FontSize="13"
-                           CornerRadius="6" Height="40"
-                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                           Margin="0,8,0,0"/>
-                </StackPanel>
-            </StackPanel>
-            
-            <!-- Password Reset Form -->
-            <StackPanel IsVisible="{Binding IsPasswordResetMode}">
-                <TextBlock Text="Passwort zurücksetzen" FontSize="24" FontWeight="SemiBold" 
-                          HorizontalAlignment="Center" Margin="0,0,0,35"
-                          Foreground="{DynamicResource ThemeForegroundBrush}"/>
-                
-                <StackPanel Spacing="16" IsVisible="{Binding !IsPasswordResetCodeSent}">
-                    <StackPanel>
-                        <TextBlock Text="Benutzername oder E-Mail" FontWeight="Medium" Margin="0,0,0,6" 
-                                  Foreground="{DynamicResource ThemeForegroundBrush}"/>
-                        <TextBox Text="{Binding ResetUsernameOrEmail}"
-                                Watermark="Benutzername oder E-Mail-Adresse"
-                                Padding="12" FontSize="14"
-                                Height="40" CornerRadius="6"/>
-                    </StackPanel>
-                    
-                    <Button Content="Reset-Code senden" 
-                           Command="{Binding RequestPasswordResetCommand}"
-                           Classes="accent"
-                           Padding="20,16" FontSize="14" FontWeight="Medium"
-                           CornerRadius="6" Height="52"
-                           HorizontalAlignment="Stretch"
-                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                           Margin="0,8,0,0"/>
-                </StackPanel>
-                
-                <StackPanel Spacing="16" IsVisible="{Binding IsPasswordResetCodeSent}">
-                    <TextBlock Text="Ein Reset-Code wurde an Ihre E-Mail gesendet."
-                              TextWrapping="Wrap" HorizontalAlignment="Center" 
-                              Margin="0,0,0,20" FontSize="14"
-                              Foreground="{DynamicResource ThemeForegroundLowBrush}"/>
-                    
-                    <StackPanel>
-                        <TextBlock Text="Reset-Code" FontWeight="Medium" Margin="0,0,0,6" 
-                                  Foreground="{DynamicResource ThemeForegroundBrush}"/>
-                        <TextBox Text="{Binding ResetCode}"
-                                Watermark="6-stelliger Code"
-                                Padding="12" FontSize="16" FontFamily="Consolas"
-                                Height="40" CornerRadius="6"/>
-                    </StackPanel>
-                    
-                    <StackPanel>
-                        <TextBlock Text="Neues Passwort" FontWeight="Medium" Margin="0,0,0,6" 
-                                  Foreground="{DynamicResource ThemeForegroundBrush}"/>
-                        <TextBox Text="{Binding NewResetPassword}"
-                                Watermark="Neues Passwort eingeben"
-                                PasswordChar="*"
-                                Padding="12" FontSize="14"
-                                Height="40" CornerRadius="6"/>
-                    </StackPanel>
-                    
-                    <StackPanel>
-                        <TextBlock Text="Passwort bestätigen" FontWeight="Medium" Margin="0,0,0,6" 
-                                  Foreground="{DynamicResource ThemeForegroundBrush}"/>
-                        <TextBox Text="{Binding ConfirmResetPassword}"
-                                Watermark="Passwort wiederholen"
-                                PasswordChar="*"
-                                Padding="12" FontSize="14"
-                                Height="40" CornerRadius="6"/>
-                    </StackPanel>
-                    
-                    <Button Content="Passwort zurücksetzen" 
-                           Command="{Binding ResetPasswordCommand}"
-                           Classes="accent"
-                           Padding="20,16" FontSize="14" FontWeight="Medium"
-                           CornerRadius="6" Height="52"
-                           HorizontalAlignment="Stretch"
-                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                           Margin="0,8,0,0"/>
-                </StackPanel>
-                
-                <Button Content="← Zurück zur Anmeldung"
-                       Command="{Binding ShowLoginCommand}"
-                       Padding="16,12" FontSize="13"
-                       CornerRadius="6" Height="40"
-                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                       Margin="0,16,0,0"/>
             </StackPanel>
             
             </Panel>

@@ -95,12 +95,6 @@ public class User
     public required string Email { get; set; }
     
     public bool IsAdmin { get; set; } = false;
-    public bool IsVerified { get; set; } = false;
-    
-    [MaxLength(10)]
-    public string? VerificationCode { get; set; }
-    
-    public DateTime? VerificationCodeExpiry { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastLoginAt { get; set; }
 }

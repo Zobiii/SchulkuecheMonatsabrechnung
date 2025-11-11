@@ -64,7 +64,6 @@ public class KitchenDbContext : DbContext
             b.Property(u => u.Username).IsRequired().HasMaxLength(50);
             b.Property(u => u.PasswordHash).IsRequired().HasMaxLength(255);
             b.Property(u => u.Email).IsRequired().HasMaxLength(255);
-            b.Property(u => u.VerificationCode).HasMaxLength(10);
             b.HasIndex(u => u.Username).IsUnique();
             b.HasIndex(u => u.Email).IsUnique();
         });

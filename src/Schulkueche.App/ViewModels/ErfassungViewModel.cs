@@ -83,7 +83,13 @@ public partial class ErfassungViewModel : ViewModelBase
             var orders = await _orderRepo.GetForDateAsync(Datum).ConfigureAwait(false);
             var byPerson = orders.ToDictionary(o => o.PersonId);
             
-            foreach (var p in persons)
+            // Sort by category: Gratis (2), Kinder (1), Pensionisten (0), then by name
+            var sortedPersons = persons
+                .OrderByDescending(p => p.Category)
+                .ThenBy(p => p.Name)
+                .ToList();
+            
+            foreach (var p in sortedPersons)
             {
                 var display = p.Category switch
                 {

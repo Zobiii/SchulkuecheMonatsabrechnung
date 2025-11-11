@@ -134,9 +134,12 @@
                             <DataTemplate x:DataType="vm:ErfassungViewModel+Row">
                                 <Border Padding="4" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource ThemeBorderLowBrush}">
                                     <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" VerticalAlignment="Center">
-                                        <TextBlock Grid.Column="0" Text="{Binding DisplayName}"/>
-                                        <NumericUpDown Grid.Column="1" Width="100" Minimum="0" Maximum="50" Value="{Binding Quantity, Mode=TwoWay}"/>
-                                        <CheckBox Grid.Column="2" Content="Lieferung?" IsChecked="{Binding Delivery, Mode=TwoWay}"/>
+                                        <TextBlock Grid.Column="0" Text="{Binding DisplayName}" FontSize="14"/>
+                                        <NumericUpDown Grid.Column="1" Width="140" Height="40" Minimum="0" Maximum="50" 
+                                                      Value="{Binding Quantity, Mode=TwoWay}" 
+                                                      FontSize="18" FontWeight="SemiBold"
+                                                      Padding="12,8"/>
+                                        <CheckBox Grid.Column="2" Content="Lieferung?" IsChecked="{Binding Delivery, Mode=TwoWay}" FontSize="14"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -251,7 +254,7 @@
                Padding="12,6">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Grid.Column="0" 
-                          Text="Developed by Lechner Tobias v1.3.1.1 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"
+                          Text="Developed by Lechner Tobias v1.4.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"
                           FontSize="10" 
                           Foreground="Gray" 
                           VerticalAlignment="Center"/>

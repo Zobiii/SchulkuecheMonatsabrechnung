@@ -123,8 +123,10 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                         var list = items.ToList();
                         if (!list.Any()) return;
 
-                        col.Item().PaddingTop(20).PaddingBottom(8).Text(title).SemiBold().FontSize(12).FontColor(Colors.Blue.Darken1);
-                        col.Item().Table(table =>
+                        col.Item().EnsureSpace(80).Column(section =>
+                        {
+                            section.Item().PaddingTop(12).PaddingBottom(4).Text(title).SemiBold().FontSize(12).FontColor(Colors.Blue.Darken1);
+                            section.Item().Table(table =>
                         {
                             table.ColumnsDefinition(cols =>
                             {
@@ -141,14 +143,14 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                             // Header
                             table.Header(h =>
                             {
-                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).Text("Name").SemiBold().FontSize(9);
-                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).Text("Anschrift").SemiBold().FontSize(9);
-                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Anzahl").SemiBold().FontSize(9);
-                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Essen €").SemiBold().FontSize(9);
-                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Lief.").SemiBold().FontSize(9);
-                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Lief. €").SemiBold().FontSize(9);
-                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Etag.").SemiBold().FontSize(9);
-                                h.Cell().Background(Colors.Blue.Lighten4).Padding(6).AlignCenter().Text("Total").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(4).Text("Name").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(4).Text("Anschrift").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(4).AlignCenter().Text("Anzahl").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(4).AlignCenter().Text("Essen €").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(4).AlignCenter().Text("Lief.").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(4).AlignCenter().Text("Lief. €").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(4).AlignCenter().Text("Etag.").SemiBold().FontSize(9);
+                                h.Cell().Background(Colors.Blue.Lighten4).Padding(4).AlignCenter().Text("Total").SemiBold().FontSize(9);
                             });
 
                             var rowIndex = 0;
@@ -157,24 +159,25 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                                 var bg = (rowIndex % 2 == 0) ? Colors.White : Colors.Grey.Lighten5;
                                 var borderColor = Colors.Grey.Lighten2;
 
-                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).Text(r.Name).FontSize(8);
-                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).Text(r.Address ?? string.Empty).FontSize(8);
-                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.Quantity > 0 ? r.Quantity.ToString() : "-").FontSize(8);
+                                table.Cell().Background(bg).Padding(3).BorderBottom(1).BorderColor(borderColor).Text(r.Name).FontSize(8);
+                                table.Cell().Background(bg).Padding(3).BorderBottom(1).BorderColor(borderColor).Text(r.Address ?? string.Empty).FontSize(8);
+                                table.Cell().Background(bg).Padding(3).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.Quantity > 0 ? r.Quantity.ToString() : "-").FontSize(8);
 
                                 var mealSum = r.UnitPrice * r.Quantity;
-                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(mealSum > 0 ? mealSum.ToString("C") : "-").FontSize(8);
+                                table.Cell().Background(bg).Padding(3).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(mealSum > 0 ? mealSum.ToString("C") : "-").FontSize(8);
 
-                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.DeliveryCount > 0 ? r.DeliveryCount.ToString() : "-").FontSize(8);
+                                table.Cell().Background(bg).Padding(3).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.DeliveryCount > 0 ? r.DeliveryCount.ToString() : "-").FontSize(8);
 
                                 var deliverySum = r.DeliveryCount * r.DeliverySurcharge;
-                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(deliverySum > 0 ? deliverySum.ToString("C") : "-").FontSize(8);
+                                table.Cell().Background(bg).Padding(3).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(deliverySum > 0 ? deliverySum.ToString("C") : "-").FontSize(8);
 
-                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.EtagentraegerMenge > 0 ? r.EtagentraegerMenge.ToString() : "-").FontSize(8);
+                                table.Cell().Background(bg).Padding(3).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.EtagentraegerMenge > 0 ? r.EtagentraegerMenge.ToString() : "-").FontSize(8);
 
-                                table.Cell().Background(bg).Padding(4).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.Total.ToString("C")).SemiBold().FontSize(8);
+                                table.Cell().Background(bg).Padding(3).BorderBottom(1).BorderColor(borderColor).AlignCenter().Text(r.Total.ToString("C")).SemiBold().FontSize(8);
 
                                 rowIndex++;
                             }
+                            });
                         });
                     }
 
@@ -190,7 +193,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                         c.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
                         c.Item().PaddingTop(8).AlignLeft().Text(t =>
                         {
-                            t.Span("Erstellt mit Schulkueche Monatsabrechnung v1.3.1.1").FontSize(8).FontColor(Colors.Grey.Darken1);
+                            t.Span("Erstellt mit Schulkueche Monatsabrechnung v1.4.0").FontSize(8).FontColor(Colors.Grey.Darken1);
                         });
                     });
 

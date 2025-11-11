@@ -1,6 +1,6 @@
 # Gemeinde-Küche Munderfing - Monatsabrechnung
 
-**Version: v1.3.1.1** | **Release Date: Oktober 2025**
+**Version: v1.4.0** | **Release Date: November 2025**
 
 🏢 **Professionelle Desktop-Anwendung** für die vollständige Verwaltung der Gemeinde-Küche in Munderfing.  
 Moderne Avalonia-UI mit .NET 9, SQLite-Datenbank und professionellem PDF-Export.
@@ -11,8 +11,7 @@ Moderne Avalonia-UI mit .NET 9, SQLite-Datenbank und professionellem PDF-Export.
 
 ### 🔐 **Benutzerauthentifizierung**
 - **Sichere Anmeldung**: Username/Passwort-System mit Verschlüsselung
-- **Benutzerregistrierung**: E-Mail-Verifizierung mit 6-stelligen Codes
-- **Passwort-Recovery**: Sichere Passwort-Zurücksetzung via E-Mail
+- **Vereinfachte Registrierung**: Direkter Zugang ohne E-Mail-Bestätigung
 - **Moderne Login-UI**: 
   - Adaptive Themes (Hell-/Dunkelmodus)
   - Custom `AppSurfaceGray` Ressourcen für optimale Kontraste
@@ -197,7 +196,13 @@ dotnet run --project src/Schulkueche.App --configuration Debug
 
 ## ✅ **Version History & Features**
 
-### **v1.3.1.1** (Oktober 2025) - *Current*
+### **v1.4.0** (November 2025) - *Current*
+- ✅ **Vereinfachte Authentifizierung**: E-Mail-Verifizierung komplett entfernt
+- ✅ **Direkter Zugang**: Neue Benutzer können sich sofort nach Registrierung anmelden
+- ✅ **Streamlined UI**: Login und Registrierung ohne komplexe Workflows
+- ✅ **Migration**: Datenbankschema bereinigt, unnötige Spalten entfernt
+
+### **v1.3.1.1** (Oktober 2025)
 - ✅ **Umfassende Dokumentation**: Vollständig überarbeitete README und WARP.md
 - ✅ **Versions-Synchronisation**: Einheitliche Versionsnummern in UI und PDF-Export
 - ✅ **Enhanced LoginWindow UI**: Custom Theme Resources für optimale Darstellung
