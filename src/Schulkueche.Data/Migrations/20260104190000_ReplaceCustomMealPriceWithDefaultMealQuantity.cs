@@ -10,16 +10,18 @@ namespace Schulkueche.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "CustomMealPrice",
-                table: "Persons");
-
+            // Add new column first with default value
             migrationBuilder.AddColumn<int>(
                 name: "DefaultMealQuantity",
                 table: "Persons",
                 type: "INTEGER",
                 nullable: false,
                 defaultValue: 1);
+            
+            // Drop old column after new one is added
+            migrationBuilder.DropColumn(
+                name: "CustomMealPrice",
+                table: "Persons");
         }
 
         /// <inheritdoc />
