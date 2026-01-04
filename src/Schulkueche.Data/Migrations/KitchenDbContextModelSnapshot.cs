@@ -96,10 +96,10 @@ namespace Schulkueche.Data.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("CustomMealPrice")
-                        .HasColumnType("TEXT");
-
                     b.Property<bool>("DefaultDelivery")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DefaultMealQuantity")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("HouseNumber")

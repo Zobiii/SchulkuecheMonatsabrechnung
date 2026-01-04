@@ -1,6 +1,6 @@
 # Gemeinde-Küche Munderfing - Monatsabrechnung
 
-**Version: v1.4.0** | **Release Date: November 2025**
+**Version: v1.4.1** | **Release Date: Januar 2026**
 
 🏢 **Professionelle Desktop-Anwendung** für die vollständige Verwaltung der Gemeinde-Küche in Munderfing.  
 Moderne Avalonia-UI mit .NET 9, SQLite-Datenbank und professionellem PDF-Export.
@@ -25,7 +25,7 @@ Moderne Avalonia-UI mit .NET 9, SQLite-Datenbank und professionellem PDF-Export.
   - 🧓 **Pensionisten** (4,50€/Essen)
   - 👶 **Kindergruppe** (2,90€/Essen) 
   - 🆓 **Gratis-Mahlzeiten** (0,00€/Essen)
-- **Flexible Preisgestaltung**: Individuelle Essenpreise pro Person
+- **Automatische Essensmengen**: Konfigurierbare Standardmenge für Pensionisten (z.B. bei Paaren)
 - **Lieferungsoptionen**: Standard-Liefereinstellungen konfigurierbar
 - **Etagenträger-Integration**: Automatische Verknüpfung mit Monatsgebühren
 
@@ -196,7 +196,13 @@ dotnet run --project src/Schulkueche.App --configuration Debug
 
 ## ✅ **Version History & Features**
 
-### **v1.4.0** (November 2025) - *Current*
+### **v1.4.1** (Januar 2026) - *Current*
+- ✅ **Automatische Essensmengen**: Neues Feld "Automatische Essensmenge" für Pensionisten (Standard: 1)
+- ✅ **Kompakteres Login-Fenster**: Anmeldefenster-Höhe von 1000px auf 700px reduziert
+- ✅ **Flexibilität für Paare**: Bei Pensionisten-Paaren kann die automatische Menge auf 2 gesetzt werden
+- ✅ **Datenbankoptimierung**: CustomMealPrice durch DefaultMealQuantity ersetzt
+
+### **v1.4.0** (November 2025)
 - ✅ **Vereinfachte Authentifizierung**: E-Mail-Verifizierung komplett entfernt
 - ✅ **Direkter Zugang**: Neue Benutzer können sich sofort nach Registrierung anmelden
 - ✅ **Streamlined UI**: Login und Registrierung ohne komplexe Workflows

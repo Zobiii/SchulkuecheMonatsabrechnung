@@ -21,17 +21,19 @@ public partial class ErfassungViewModel : ViewModelBase
 
     public class Row : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
-        public Row(int personId, string displayName, bool defaultDelivery)
+        public Row(int personId, string displayName, bool defaultDelivery, int defaultMealQuantity)
         {
             PersonId = personId;
             DisplayName = displayName;
             DefaultDelivery = defaultDelivery;
+            DefaultMealQuantity = defaultMealQuantity;
             _delivery = defaultDelivery;
         }
 
         public int PersonId { get; }
         public string DisplayName { get; }
         public bool DefaultDelivery { get; }
+        public int DefaultMealQuantity { get; }
 
         private int _quantity;
         public int Quantity
@@ -98,7 +100,7 @@ public partial class ErfassungViewModel : ViewModelBase
                     PersonCategory.FreeMeal => $"{p.Name}  (Gratis)",
                     _ => p.Name
                 };
-                var row = new Row(p.Id, display, p.DefaultDelivery);
+                var row = new Row(p.Id, display, p.DefaultDelivery, p.DefaultMealQuantity);
                 if (byPerson.TryGetValue(p.Id, out var existing))
                 {
                     row.Quantity = existing.Quantity;
@@ -106,8 +108,8 @@ public partial class ErfassungViewModel : ViewModelBase
                 }
                 else if (p.Category == PersonCategory.Pensioner)
                 {
-                    // Default quantity to 1 for pensioners when no prior order exists for the selected date
-                    row.Quantity = 1;
+                    // Use DefaultMealQuantity for pensioners when no prior order exists
+                    row.Quantity = p.DefaultMealQuantity;
                 }
                 Zeilen.Add(row);
             }
@@ -172,9 +174,9 @@ public partial class ErfassungViewModel : ViewModelBase
         foreach (var z in Zeilen)
         {
             z.Delivery = z.DefaultDelivery;
-            // Wenn Pensionist: Menge = 1 setzen
+            // Reset to DefaultMealQuantity for pensioners
             if (z.DisplayName.Contains("Pensionist", StringComparison.CurrentCultureIgnoreCase))
-                z.Quantity = Math.Max(1, z.Quantity);
+                z.Quantity = z.DefaultMealQuantity;
         }
     }
 }

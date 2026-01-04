@@ -33,8 +33,14 @@ public partial class PersonenViewModel : ViewModelBase
     [ObservableProperty] private string? _contact;
     [ObservableProperty] private bool _defaultDelivery;
     [ObservableProperty] private PersonCategory _category = PersonCategory.Pensioner;
-    [ObservableProperty] private decimal? _customMealPrice;
-    [ObservableProperty] private string _customMealPriceText = string.Empty;
+    [ObservableProperty] private int _defaultMealQuantity = 1;
+    
+    public bool IsPensionerCategory => Category == PersonCategory.Pensioner;
+    
+    partial void OnCategoryChanged(PersonCategory value)
+    {
+        OnPropertyChanged(nameof(IsPensionerCategory));
+    }
     
     // Etagenträger are now managed separately in their own tab/section
 
@@ -66,15 +72,6 @@ public partial class PersonenViewModel : ViewModelBase
             return;
         }
 
-        // Validate CustomMealPrice input
-        if (!string.IsNullOrWhiteSpace(CustomMealPriceText) && !decimal.TryParse(CustomMealPriceText.Replace(',', '.'), System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture, out var parsedPrice))
-        {
-            Status = "Individueller Essenspreis ist ungültig. Bitte eine Zahl eingeben (z.B. 4,50).";
-            return;
-        }
-        
-        CustomMealPrice = string.IsNullOrWhiteSpace(CustomMealPriceText) ? null : decimal.Parse(CustomMealPriceText.Replace(',', '.'), System.Globalization.NumberStyles.Currency, System.Globalization.CultureInfo.InvariantCulture);
-
         try
         {
             if (SelectedPerson is null)
@@ -89,7 +86,7 @@ public partial class PersonenViewModel : ViewModelBase
                     Contact = Contact,
                     DefaultDelivery = DefaultDelivery,
                     Category = Category,
-                    CustomMealPrice = CustomMealPrice
+                    DefaultMealQuantity = DefaultMealQuantity
                 };
                 await _repo.AddAsync(p).ConfigureAwait(false);
                 PersonenListe.Add(p);
@@ -107,7 +104,7 @@ public partial class PersonenViewModel : ViewModelBase
                 SelectedPerson.Contact = Contact;
                 SelectedPerson.DefaultDelivery = DefaultDelivery;
                 SelectedPerson.Category = Category;
-                SelectedPerson.CustomMealPrice = CustomMealPrice;
+                SelectedPerson.DefaultMealQuantity = DefaultMealQuantity;
                 await _repo.UpdateAsync(SelectedPerson).ConfigureAwait(false);
                 Status = "Änderungen gespeichert.";
             }
@@ -131,10 +128,7 @@ public partial class PersonenViewModel : ViewModelBase
         DefaultDelivery = false;
         Category = PersonCategory.Pensioner;
         SelectedPerson = null;
-        CustomMealPrice = null;
-        CustomMealPriceText = string.Empty;
-        
-        // Etagenträger are now managed separately
+        DefaultMealQuantity = 1;
         
         Status = null;
     }
@@ -184,10 +178,7 @@ public partial class PersonenViewModel : ViewModelBase
         Contact = value.Contact;
         DefaultDelivery = value.DefaultDelivery;
         Category = value.Category;
-        CustomMealPrice = value.CustomMealPrice;
-        CustomMealPriceText = value.CustomMealPrice?.ToString("F2") ?? string.Empty;
-        
-        // Etagenträger are now managed separately
+        DefaultMealQuantity = value.DefaultMealQuantity;
         
         Status = null;
     }

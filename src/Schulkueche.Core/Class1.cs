@@ -45,9 +45,9 @@ public class Person
     public PersonCategory Category { get; set; }
 
     /// <summary>
-    /// Optional per-person custom unit price. If set, overrides the category default.
+    /// Default meal quantity for automatic pre-filling (only for Pensioners). Default is 1.
     /// </summary>
-    public decimal? CustomMealPrice { get; set; }
+    public int DefaultMealQuantity { get; set; } = 1;
 }
 
 /// <summary>

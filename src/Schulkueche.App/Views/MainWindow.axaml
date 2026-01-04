@@ -72,8 +72,9 @@
                                     <TextBlock Grid.Row="4" Grid.Column="0" Text="Kontakt:" VerticalAlignment="Center"/>
                                     <TextBox Grid.Row="4" Grid.Column="1" Watermark="Telefon / E‑Mail" Text="{Binding Contact, Mode=TwoWay}"/>
 
-                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Indiv. Essenspreis (€):" VerticalAlignment="Center"/>
-                                    <TextBox Grid.Row="5" Grid.Column="1" Watermark="Leer lassen für Standardpreis" Text="{Binding CustomMealPriceText, Mode=TwoWay}"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Automatische Essensmenge:" VerticalAlignment="Center"/>
+                                    <NumericUpDown Grid.Row="5" Grid.Column="1" Minimum="1" Maximum="10" Value="{Binding DefaultMealQuantity, Mode=TwoWay}" IsEnabled="{Binding IsPensionerCategory}"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="2" Text="(nur bei Pensionisten)" VerticalAlignment="Center" Foreground="Gray" FontSize="11" Grid.ColumnSpan="2"/>
                                 </Grid>
                                 <!-- Etagenträger werden jetzt in einem separaten Tab verwaltet -->
 
@@ -254,8 +255,8 @@
                Padding="12,6">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Grid.Column="0" 
-                          Text="Developed by Lechner Tobias v1.4.0 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"
-                          FontSize="10" 
+                          Text="Developed by Lechner Tobias v1.4.1 / Code: https://github.com/Zobiii/SchulkuecheMonatsabrechnung"
+                          FontSize="10"
                           Foreground="Gray" 
                           VerticalAlignment="Center"/>
                           

@@ -69,7 +69,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                     throw new InvalidOperationException($"Person data missing for PersonId {firstOrder.PersonId}. This indicates a data integrity issue.");
                 }
 
-                var unit = p.CustomMealPrice ?? p.Category switch
+                var unit = p.Category switch
                 {
                     PersonCategory.Pensioner => PricingDefaults.PensionerMealPrice,
                     PersonCategory.ChildGroup => PricingDefaults.ChildMealPrice,
@@ -193,7 +193,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                         c.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
                         c.Item().PaddingTop(8).AlignLeft().Text(t =>
                         {
-                            t.Span("Erstellt mit Schulkueche Monatsabrechnung v1.4.0").FontSize(8).FontColor(Colors.Grey.Darken1);
+                            t.Span("Erstellt mit Schulkueche Monatsabrechnung v1.4.1").FontSize(8).FontColor(Colors.Grey.Darken1);
                         });
                     });
 
