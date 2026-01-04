@@ -11,7 +11,7 @@ using Schulkueche.Data;
 namespace Schulkueche.Data.Migrations
 {
     [DbContext(typeof(KitchenDbContext))]
-    [Migration("20260104194518_InitialCreate")]
+    [Migration("20260104194955_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
