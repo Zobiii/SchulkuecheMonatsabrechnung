@@ -11,8 +11,8 @@ using Schulkueche.Data;
 namespace Schulkueche.Data.Migrations
 {
     [DbContext(typeof(KitchenDbContext))]
-    [Migration("20251111171529_RemoveEmailVerificationFromUsers")]
-    partial class RemoveEmailVerificationFromUsers
+    [Migration("20260104194518_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,10 +99,10 @@ namespace Schulkueche.Data.Migrations
                         .HasMaxLength(120)
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("CustomMealPrice")
-                        .HasColumnType("TEXT");
-
                     b.Property<bool>("DefaultDelivery")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DefaultMealQuantity")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("HouseNumber")

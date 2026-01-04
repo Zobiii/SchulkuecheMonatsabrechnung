@@ -5,24 +5,18 @@
 namespace Schulkueche.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddCustomMealPrice : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<decimal>(
-                name: "CustomMealPrice",
-                table: "Persons",
-                type: "TEXT",
-                nullable: true);
+
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "CustomMealPrice",
-                table: "Persons");
+
         }
     }
 }
