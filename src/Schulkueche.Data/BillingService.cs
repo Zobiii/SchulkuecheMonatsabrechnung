@@ -111,8 +111,8 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
 
                 page.Header().PaddingBottom(20).Column(header =>
                 {
-                    header.Item().AlignCenter().Text($"Gemeinde-Küche Munderfing").SemiBold().FontSize(18).FontColor(Colors.Blue.Darken2);
-                    header.Item().PaddingTop(5).AlignCenter().Text($"Sammelabrechnung {monthName}").FontSize(14).FontColor(Colors.Grey.Darken1);
+                    header.Item().AlignCenter().Text($"Schulküche Munderfing").SemiBold().FontSize(18).FontColor(Colors.Blue.Darken2);
+                    header.Item().PaddingTop(5).AlignCenter().Text($"Monatsabrechnung {monthName}").FontSize(14).FontColor(Colors.Grey.Darken1);
                     header.Item().PaddingTop(10).LineHorizontal(1).LineColor(Colors.Grey.Lighten1);
                 });
 
@@ -193,7 +193,7 @@ internal sealed class BillingService(KitchenDbContext db) : IBillingService
                         c.Item().LineHorizontal(1).LineColor(Colors.Grey.Lighten2);
                         c.Item().PaddingTop(8).AlignLeft().Text(t =>
                         {
-                            t.Span("Erstellt mit Schulkueche Monatsabrechnung v1.4.1").FontSize(8).FontColor(Colors.Grey.Darken1);
+                            t.Span("Erstellt mit Schulkueche Monatsabrechnung v1.4.2").FontSize(8).FontColor(Colors.Grey.Darken1);
                         });
                     });
 

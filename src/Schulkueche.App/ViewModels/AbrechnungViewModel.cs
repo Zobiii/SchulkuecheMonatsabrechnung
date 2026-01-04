@@ -88,7 +88,7 @@ public partial class AbrechnungViewModel : ViewModelBase
                 System.IO.Directory.CreateDirectory(targetDir);
             }
             
-            var file = System.IO.Path.Combine(targetDir, $"Sammelabrechnung_{Jahr}-{Monat:00}.pdf");
+            var file = System.IO.Path.Combine(targetDir, $"Monatsabrechnung_{Jahr}-{Monat:00}.pdf");
             await _billing.ExportMonthlyPdfAsync(Jahr, Monat, file).ConfigureAwait(false);
             Status = $"PDF gespeichert: {file}";
         }

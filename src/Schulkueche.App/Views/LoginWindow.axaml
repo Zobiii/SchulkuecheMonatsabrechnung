@@ -6,8 +6,8 @@
         mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="700"
         x:Class="Schulkueche.App.Views.LoginWindow"
         x:DataType="vm:LoginViewModel"
-        Title="Gemeinde-Küche - Anmeldung"
-        Width="600" Height="700"
+        Title="Schulküche Munderfing - Anmeldung"
+        Width="600" Height="800"
         WindowStartupLocation="CenterScreen"
         CanResize="True">
 
@@ -43,16 +43,11 @@
                 <TextBlock Text="🍳" FontSize="52" HorizontalAlignment="Center"/>
             </Border>
             
-            <TextBlock Text="Gemeinde Küche" 
-                      FontSize="32" FontWeight="Bold" 
+            <TextBlock Text="Schulküche Munderfing" 
+                      FontSize="28" FontWeight="Bold" 
                       HorizontalAlignment="Center" 
                       Margin="0,20,0,6"
                       Foreground="{DynamicResource ThemeForegroundBrush}"/>
-            
-            <TextBlock Text="Munderfing" 
-                      FontSize="18" 
-                      HorizontalAlignment="Center"
-                      Foreground="{DynamicResource ThemeForegroundLowBrush}"/>
         </StackPanel>
 
         <!-- Main Content -->
