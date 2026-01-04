@@ -22,6 +22,17 @@ public static class DbInitializer
         
         try
         {
+            // First check if Persons table exists at all
+            using var tableCheckCmd = connection.CreateCommand();
+            tableCheckCmd.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Persons';";
+            var tableExists = Convert.ToInt32(await tableCheckCmd.ExecuteScalarAsync()) > 0;
+            
+            if (!tableExists)
+            {
+                // Table doesn't exist yet - let EF migrations create it
+                return;
+            }
+            
             // Check if DefaultMealQuantity column exists
             using var checkCmd = connection.CreateCommand();
             checkCmd.CommandText = "SELECT COUNT(*) FROM pragma_table_info('Persons') WHERE name='DefaultMealQuantity';";
