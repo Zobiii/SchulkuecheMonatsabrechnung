@@ -105,7 +105,7 @@ public class User
 /// </summary>
 public static class PricingDefaults
 {
-    public const decimal PensionerMealPrice = 4.50m;
+    public const decimal PensionerMealPrice = 5.00m;
     public const decimal DeliverySurcharge = 3.50m;
-    public const decimal ChildMealPrice = 2.90m;
+    public const decimal ChildMealPrice = 3.00m;
 }
